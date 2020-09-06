@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb://localhost/IOU",
+    "jwtSecret": "IOU_myJwtSecret"
+}
