@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import AppNavbar from './components/AppNavbar';
 import OwesList from './components/OwesList';
 import OweModal from './components/OweModal';
+import TabBar from './components/TabBar';
 
 import { Container } from 'reactstrap';
 
@@ -10,6 +11,8 @@ import store from './store';
 import { loadUser } from './actions/authActions';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
+
+
 
 import { TabContent, TabPane, Nav, NavItem, NavLink, Card, Button, CardTitle, CardText, Row, Col } from 'reactstrap';
 import classnames from 'classnames';
@@ -47,6 +50,8 @@ class App extends Component {
       <Provider store={store}>
         <div className='App'>
           <AppNavbar />
+          <TabBar />
+          {/*
           <Container>
             <Nav tabs>
               <NavItem>
@@ -100,7 +105,7 @@ class App extends Component {
               <TabPane tabId="3">
               </TabPane>
             </TabContent>
-          </Container>
+          </Container>*/}
         </div>
       </Provider>
     );
