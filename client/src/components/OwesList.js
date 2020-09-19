@@ -28,8 +28,8 @@ class OwesList extends Component {
         return (
             <Container>
                 <ListGroup>
-                    <TransitionGroup className="shopping-List">
-                        {owes.map(({ _id, name }) => (
+                    <TransitionGroup className="owe-List">
+                        {owes.map(({ _id, name, favor }) => (
                             <CSSTransition key={_id} timeout={500} classNames="fade">
                                 <ListGroupItem>
                                     {this.props.isAuthenticated ? <Button
@@ -38,7 +38,7 @@ class OwesList extends Component {
                                         size="sm"
                                         onClick={this.onDeleteClick.bind(this, _id)}
                                     >&times;</Button> : ''}
-                                    {name}
+                                    {name}{favor}
                                 </ListGroupItem>
                             </CSSTransition>
                         ))}
@@ -53,7 +53,7 @@ class OwesList extends Component {
 
 const mapStateToProps = (state) => ({
     owe: state.owe,
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
 });
 
 export default connect(

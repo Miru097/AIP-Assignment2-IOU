@@ -40,7 +40,6 @@ class TabBar extends Component {
         }
     }
     render() {
-
         const { isAuthenticated, user } = this.props.auth;
         const authOwelink = (
             <NavItem >
@@ -100,7 +99,7 @@ class TabBar extends Component {
                         <TabPane tabId="2">
                             <Row>
                                 <Col sm="12">
-                                    <h4 className="mb-3 ml-4">Your Owe List</h4>
+
                                     <OweModal />
                                     <OwesList />
                                 </Col>

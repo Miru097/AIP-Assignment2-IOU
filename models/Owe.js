@@ -3,9 +3,20 @@ const Schema = mongoose.Schema;
 
 //Create Schema
 const OweSchema = new Schema({
-    name: {
+    favor: {
         type: String,
         required: true
+    },
+    debtor: {
+        type: String,
+        required: true
+    },
+    creditor: {
+        type: String,
+        required: true
+    },
+    proof: {
+        type: String,
     },
     date: {
         type: Date,

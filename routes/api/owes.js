@@ -12,9 +12,23 @@ router.get('/', (req, res) => {
 
 router.post('/', auth, (req, res) => {
     const newOwe = new Owe({
+        favor: req.body.favor,
+        debtor: req.body.debtor,
+        creditor: req.body.creditor,
+        proof: req.body.proof
+    });
+
+    //if (!name || !email || !password) {
+    //    return res.status(400).json({ msg: 'Please enter all fields' });
+    //}
+    newOwe.save().then(owe => res.json(owe));
+
+
+
+    {/*const newOwe = new Owe({
         name: req.body.name
     });
-    newOwe.save().then(owe => res.json(owe));
+newOwe.save().then(owe => res.json(owe));*/}
 });
 
 router.delete('/:id', auth, (req, res) => {

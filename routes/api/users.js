@@ -32,7 +32,6 @@ router.post('/', (req, res) => {
                                 config.get('jwtSecret'),
                                 { expiresIn: 3600 },
                                 (err, token) => {
-
                                     jwt.sign(
                                         { id: user.id },
                                         config.get('jwtSecret'),
