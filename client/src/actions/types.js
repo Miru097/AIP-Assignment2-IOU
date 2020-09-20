@@ -1,5 +1,6 @@
 export const GET_OWES = 'GET_OWES';
 export const ADD_OWE = 'ADD_OWE';
+export const ADD_FAIL = 'ADD_FAIL';
 export const DELETE_OWE = 'DELETE_OWE';
 export const OWES_LOADING = 'OWES_LOADING';
 

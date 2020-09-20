@@ -1,5 +1,5 @@
 //import { v4 as uuidv4 } from 'uuid';
-import { GET_OWES, ADD_OWE, DELETE_OWE, OWES_LOADING } from '../actions/types';
+import { GET_OWES, ADD_OWE, DELETE_OWE, OWES_LOADING, ADD_FAIL } from '../actions/types';
 
 const initialState = {
     owes: [],
@@ -18,6 +18,11 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 owes: state.owes.filter(owe => owe._id !== action.payload)
+            };
+        case ADD_FAIL:
+            return {
+                ...state,
+                owes: [...state.owes]
             };
         case ADD_OWE:
             return {

@@ -29,7 +29,7 @@ class OwesList extends Component {
             <Container>
                 <ListGroup>
                     <TransitionGroup className="owe-List">
-                        {owes.map(({ _id, name, favor }) => (
+                        {owes.map(({ _id, name, favor, creditor, debtor }) => (
                             <CSSTransition key={_id} timeout={500} classNames="fade">
                                 <ListGroupItem>
                                     {this.props.isAuthenticated ? <Button
@@ -38,7 +38,7 @@ class OwesList extends Component {
                                         size="sm"
                                         onClick={this.onDeleteClick.bind(this, _id)}
                                     >&times;</Button> : ''}
-                                    {name}{favor}
+                                    {name}{favor}{creditor}{debtor}
                                 </ListGroupItem>
                             </CSSTransition>
                         ))}

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import {
     Nav,
     NavItem,
@@ -18,9 +18,9 @@ import PropTypes from 'prop-types';
 import OweModal from './OweModal';
 import OwesList from './OwesList';
 import classnames from 'classnames';
-import store from '../store';
-import { Provider } from 'react-redux';
-import { loadUser } from '../actions/authActions';
+//import store from '../store';
+//import { Provider } from 'react-redux';
+//import { loadUser } from '../actions/authActions';
 
 class TabBar extends Component {
     static propTypes = {

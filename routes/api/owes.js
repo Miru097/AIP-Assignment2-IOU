@@ -10,7 +10,9 @@ router.get('/', (req, res) => {
         .then(owe => res.json(owe));
 });
 
-router.post('/', auth, (req, res) => {
+router.post('/', (req, res) => {
+    const { favor, debtor, creditor } = req.body;
+
     const newOwe = new Owe({
         favor: req.body.favor,
         debtor: req.body.debtor,
@@ -18,9 +20,9 @@ router.post('/', auth, (req, res) => {
         proof: req.body.proof
     });
 
-    //if (!name || !email || !password) {
-    //    return res.status(400).json({ msg: 'Please enter all fields' });
-    //}
+    if (!favor || !debtor || !creditor) {
+        return res.status(400).json({ msg: 'Please enter all fields' });
+    }
     newOwe.save().then(owe => res.json(owe));
 
 

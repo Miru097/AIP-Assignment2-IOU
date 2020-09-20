@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_OWES, ADD_OWE, DELETE_OWE, OWES_LOADING } from './types';
+import { GET_OWES, ADD_OWE, DELETE_OWE, OWES_LOADING, ADD_FAIL } from './types';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 
@@ -15,6 +15,8 @@ export const getOwes = () => dispatch => {
     );
 };
 
+
+
 export const addOwe = owe => (dispatch, getState) => {
   axios
     .post('/api/owes', owe, tokenConfig(getState))
@@ -23,9 +25,16 @@ export const addOwe = owe => (dispatch, getState) => {
       payload: res.data
     }))
     .catch(
-      err => dispatch(returnErrors(err.response.data, err.response.status))
-    );
+      err => {
+        dispatch(
+          returnErrors(err.response.data, err.response.status, 'ADD_FAIL')
+        );
+        dispatch({
+          type: ADD_FAIL
+        });
+      });
 };
+
 
 export const deleteOwe = id => (dispatch, getState) => {
   axios
@@ -46,3 +55,33 @@ export const setOwesLoading = () => {
     type: OWES_LOADING
   };
 };
+
+/*
+export const addOwe = ({ favor, debtor, creditor, proof }) => dispatch => {
+  // Headers
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+
+  // Request body
+  const body = JSON.stringify({ favor, debtor, creditor, proof });
+
+  axios
+    .post('/api/owes', body, config)
+    .then(res => dispatch({
+      type: ADD_OWE,
+      payload: res.data
+    }))
+    .catch(
+      err => {
+        dispatch(
+          returnErrors(err.response.data, err.response.status, 'ADD_FAIL')
+        );
+        dispatch({
+          type: ADD_FAIL
+        });
+      });
+};
+*/
