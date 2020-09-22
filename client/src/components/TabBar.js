@@ -26,9 +26,6 @@ class TabBar extends Component {
     static propTypes = {
         auth: PropTypes.object.isRequired
     }
-    //componentDidMount() {
-    //    store.dispatch(loadUser());
-    //}
 
     state = {
         activeTab: '1'
@@ -40,7 +37,7 @@ class TabBar extends Component {
         }
     }
     render() {
-        const { isAuthenticated, user } = this.props.auth;
+        const { isAuthenticated } = this.props.auth;
         const authOwelink = (
             <NavItem >
                 <NavLink

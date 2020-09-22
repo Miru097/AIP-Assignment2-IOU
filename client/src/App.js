@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import AppNavbar from './components/AppNavbar';
 import TabBar from './components/TabBar';
 
-import { Container } from 'reactstrap';
-
 import { Provider } from 'react-redux';
 import store from './store';
 import { loadUser } from './actions/authActions';

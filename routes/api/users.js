@@ -56,4 +56,10 @@ router.post('/', (req, res) => {
         })
 });
 
+router.get('/', (req, res) => {
+    User.find({}, { password: 0 })
+        .sort({ register_date: -1 })
+        .then(user => res.json(user));
+});
+
 module.exports = router;

@@ -7,6 +7,7 @@ import { getOwes, deleteOwe } from '../actions/oweActions';
 import PropTypes from 'prop-types';
 
 
+
 class OwesList extends Component {
 
     static propTypes = {
