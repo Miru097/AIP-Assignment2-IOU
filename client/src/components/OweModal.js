@@ -1,21 +1,21 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
     Button,
     Modal,
     ModalHeader,
     ModalBody,
-    Form,
+
     FormGroup,
     Label,
     Input,
     ModalFooter,
     CustomInput,
     FormText,
-    Alert,
-    ListGroupItem
+    Alert, Form
 } from 'reactstrap';
-import { Switch, Select } from 'antd';
+import { Switch, Select, Upload } from 'antd';
 import 'antd/dist/antd.css'
+import { UploadOutlined } from '@ant-design/icons';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -36,6 +36,7 @@ class OweModal extends Component {
         creditor: '',
         checked: true,
         msg: null,
+        fileList: [],
     };
     componentDidUpdate(prevProps) {
         const { error } = this.props;
@@ -52,6 +53,7 @@ class OweModal extends Component {
         this.props.getUsers();
     }
 
+
     constructor() {
         super();
         this.handleChange = this.handleChange.bind(this);
@@ -66,6 +68,7 @@ class OweModal extends Component {
             creditor: null,
             favor: null,
             checked: true,
+            fileList: [],
         });
     };
     toggleclose = () => {
@@ -97,6 +100,7 @@ class OweModal extends Component {
     };
 
     onSubmit = (e) => {
+        console.log("1")
         e.preventDefault();
         const { favor, debtor, creditor, proof, checked } = this.state;
         const newOwe = {
@@ -116,6 +120,24 @@ class OweModal extends Component {
             creditor: this.state.debtor
         });
     }
+    fileHandleChange = info => {
+        let fileList = [...info.fileList];
+
+        // 1. Limit the number of uploaded files
+        // Only to show 1 recent uploaded files, and old ones will be replaced by the new
+        fileList = fileList.slice(-1);
+
+        // 2. Read from response and show file link
+        // fileList = fileList.map(file => {
+        //     if (file.response) {
+        //         // Component will show file.url as link
+        //         file.url = file.response.url;
+        //     }
+        //     return file;
+        // });
+
+        this.setState({ fileList });
+    };
 
 
     render() {
@@ -127,6 +149,15 @@ class OweModal extends Component {
             }
         }
         const { Option } = Select;
+        const normFile = (e) => {
+            console.log('Upload event:', e);
+
+            if (Array.isArray(e)) {
+                return e;
+            }
+
+            return e && e.fileList;
+        };
         return (
             <div>
                 <h4 className="mb-3 ml-4">Your Owe List</h4>
@@ -136,7 +167,6 @@ class OweModal extends Component {
                     onClick={this.toggle}
                 >Add New Owe
                 </Button> : <h4 className="mb-3 ml-4">Please log in to manage your owe list</h4>}
-
                 <Modal
                     isOpen={this.state.modal}
                     toggle={this.toggle}
@@ -161,16 +191,10 @@ class OweModal extends Component {
                             </FormGroup>
                             <FormGroup>
                                 <Label for="to">To:</Label>
-                                {/*<Input type="text"
-                                    name="to"
-                                    id="to"
-                                    placeholder="Search Name"
-                                    onChange={this.onChange}
-                        />*/}
-
                                 <Select
                                     showSearch
-                                    style={{ width: 400 }}
+                                    size="large"
+                                    style={{ width: '100%' }}
                                     name="to"
                                     id="to"
                                     placeholder="Search Name"
@@ -186,25 +210,8 @@ class OweModal extends Component {
                                     {users.map(({ _id, name, email }) => (
                                         <Option info={name + email} value={_id} key={_id}>{name} ({email})</Option>
                                     ))}
-
                                 </Select>
-
                             </FormGroup>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                             <FormGroup>
                                 <Label for="favor">Favor</Label>
                                 <CustomInput type="select"
@@ -226,8 +233,28 @@ class OweModal extends Component {
                                     <Input type="file" name="proof" id="proof" />
                                     <FormText color="muted">
                                         If you are a creditor, you need to upload evidence.
-                            </FormText>
+                                        </FormText>
                                 </FormGroup>)}
+
+                            <FormGroup>
+                                <Label for="proof">Proof</Label>
+                                <br />
+                                <Upload name="logo"
+                                    listType="picture"
+                                    fileList={this.state.fileList}
+                                    name="proof1"
+                                    label="Proof"
+                                    valuePropName="fileList"
+                                    getValueFromEvent={normFile}
+                                    extra="If you are a creditor, you need to upload evidence."
+                                    action='https://www.mocky.io/v2/5cc8019d300000980a055e76'
+                                    onChange={this.fileHandleChange}
+                                    accept=".jpg,.png,.bmp,.jpeg"
+                                //action="/upload.do"
+                                >
+                                    <Button type="button" icon={<UploadOutlined />}>Click to upload</Button>
+                                </Upload>
+                            </FormGroup>
 
                             <ModalFooter>
                                 <Button
@@ -236,24 +263,13 @@ class OweModal extends Component {
                                 >Add Owe</Button>
                             </ModalFooter>
                         </Form>
-                        {/*
-                        <TransitionGroup className="owe-List">
-                            {users.map(({ _id, name, email }) => (
-                                <CSSTransition key={_id} timeout={500} classNames="fade">
-                                    <ListGroupItem>
-                                        {name}({email})
-                                    </ListGroupItem>
-                                </CSSTransition>
-                            ))}
-                        </TransitionGroup>
-                        */}
                     </ModalBody>
                 </Modal>
-            </div>
+            </div >
+
         );
     }
 }
-
 
 const mapStateToProps = (state) => ({
     owe: state.owe,
