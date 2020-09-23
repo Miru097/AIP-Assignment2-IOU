@@ -39,7 +39,7 @@ class OwesList extends Component {
                                         size="sm"
                                         onClick={this.onDeleteClick.bind(this, _id)}
                                     >&times;</Button> : ''}
-                                    {name}{favor}{creditor}{debtor}
+                                    {favor}{creditor}{debtor}
                                 </ListGroupItem>
                             </CSSTransition>
                         ))}

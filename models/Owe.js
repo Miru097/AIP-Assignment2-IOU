@@ -16,7 +16,7 @@ const OweSchema = new Schema({
         required: true
     },
     proof: {
-        type: String,
+        type: Array,
     },
     date: {
         type: Date,
