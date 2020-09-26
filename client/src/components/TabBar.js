@@ -18,9 +18,6 @@ import PropTypes from 'prop-types';
 import OweModal from './OweModal';
 import OwesList from './OwesList';
 import classnames from 'classnames';
-//import store from '../store';
-//import { Provider } from 'react-redux';
-//import { loadUser } from '../actions/authActions';
 
 class TabBar extends Component {
     static propTypes = {
@@ -62,14 +59,6 @@ class TabBar extends Component {
                             </NavLink>
                         </NavItem>
                         {isAuthenticated ? authOwelink : null}
-                        {/* <NavItem >
-                            <NavLink
-                                className={classnames({ active: this.state.activeTab === '2' })}
-                                onClick={() => { this.toggle('2'); }}
-                            >
-                                OWE
-                            </NavLink>
-                        </NavItem> */}
                         <NavItem>
                             <NavLink
                                 className={classnames({ active: this.state.activeTab === '3' })}

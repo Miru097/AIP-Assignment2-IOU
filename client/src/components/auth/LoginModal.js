@@ -69,7 +69,6 @@ class LoginModal extends Component {
             password
         }
         this.props.login(user);
-
     };
 
     render() {
