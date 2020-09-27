@@ -139,22 +139,17 @@ class OweModal extends Component {
             return file;
         });
         this.setState({ fileList });
-        // if (fileList.length > 0) {
-        //     this.setState({ proof: this.state.imageUrl })
-        // } else {
-        //     this.setState({ proof: null })
-        // }
-        // this.getBase64(e.file.originFileObj, imageUrl =>
-        //     this.setState({ proof: this.state.imageUrl }),
-        // );
     };
     dummyRequest({ file, onSuccess }) {
         setTimeout(() => {
             onSuccess("ok");
         }, 0);
     }
-
-
+    onRemove = (e) => {
+        this.setState({
+            proof: null
+        })
+    }
 
     beforeUpload = (file) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
@@ -165,9 +160,6 @@ class OweModal extends Component {
                 this.setState({ proof: this.state.imageUrl })
                 return false;
             }, 100)
-
-
-
         }
         return new Promise((resolve, reject) => {
             if (!isJpgOrPng) {
@@ -305,6 +297,7 @@ class OweModal extends Component {
                                         customRequest={this.dummyRequest}
                                         onChange={this.fileHandleChange}
                                         beforeUpload={this.beforeUpload}
+                                        onRemove={this.onRemove}
                                         accept=".jpg,.png,.jpeg"
                                     >
                                         <Button type="button" icon={<UploadOutlined />}>Click to upload</Button>

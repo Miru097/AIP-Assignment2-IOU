@@ -69,6 +69,13 @@ class LoginModal extends Component {
             password
         }
         this.props.login(user);
+        setTimeout(() => {
+            if (this.state.msg !== null) {
+                return
+            } else {
+                window.location.reload()
+            }
+        }, 300);
     };
 
     render() {
