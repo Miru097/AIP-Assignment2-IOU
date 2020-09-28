@@ -3,8 +3,10 @@ const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 const config = require('config')
+var bodyParser = require('body-parser');
 
-
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //Set database and connect to mongoDB
 app.use(express.json());
 const db = config.get('mongoURI');
@@ -20,6 +22,7 @@ mongoose
 app.use('/api/owes', require('./routes/api/owes'));
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
+
 
 //Serve static assets if in production
 if (process.env.NODE_ENV === 'production') {

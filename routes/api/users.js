@@ -57,8 +57,8 @@ router.post('/', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-    User.find({}, { password: 0 })
-        .sort({ register_date: -1 })
+    User.find({}, { password: 0, register_date: 0 })
+        .sort({ _id: -1 })
         .then(user => res.json(user));
 });
 

@@ -1,21 +1,20 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import {
     Button,
     Modal,
     ModalHeader,
     ModalBody,
-
+    Form,
     FormGroup,
     Label,
-    Input,
     ModalFooter,
     CustomInput,
-    FormText,
-    Alert, Form
+    Alert
 } from 'reactstrap';
-import { Switch, Select, Upload } from 'antd';
+import { Switch, Select, Upload, message } from 'antd';
 import 'antd/dist/antd.css'
 import { UploadOutlined } from '@ant-design/icons';
+import { Typography } from 'antd';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -37,6 +36,7 @@ class OweModal extends Component {
         checked: true,
         msg: null,
         fileList: [],
+        users: []
     };
     componentDidUpdate(prevProps) {
         const { error } = this.props;
@@ -52,8 +52,6 @@ class OweModal extends Component {
     componentDidMount() {
         this.props.getUsers();
     }
-
-
     constructor() {
         super();
         this.handleChange = this.handleChange.bind(this);
@@ -69,6 +67,8 @@ class OweModal extends Component {
             favor: null,
             checked: true,
             fileList: [],
+            proof: null,
+            imageUrl: null
         });
     };
     toggleclose = () => {
@@ -89,18 +89,17 @@ class OweModal extends Component {
             });
         } else {
             this.setState({
-                //debtor: e.target.value,
+                debtor: e,
                 creditor: this.props.user._id
             });
         }
     };
-
     FavorChange = (e) => {
         this.setState({ [e.target.name]: e.target.value });
     };
 
     onSubmit = (e) => {
-        console.log("1")
+        this.props.clearErrors();
         e.preventDefault();
         const { favor, debtor, creditor, proof, checked } = this.state;
         const newOwe = {
@@ -111,53 +110,110 @@ class OweModal extends Component {
             checked
         };
         this.props.addOwe(newOwe);
-        //this.toggleclose();
+        setTimeout(() => {
+            if (this.state.msg !== null) {
+                return
+            } else {
+                this.toggleclose();
+            }
+        }, 300);
     }
     handleChange = (checked) => {
         this.setState({ checked });
         this.setState({
             debtor: this.state.creditor,
-            creditor: this.state.debtor
+            creditor: this.state.debtor,
+            fileList: null,
+            proof: null
         });
     }
-    fileHandleChange = info => {
-        let fileList = [...info.fileList];
-
-        // 1. Limit the number of uploaded files
-        // Only to show 1 recent uploaded files, and old ones will be replaced by the new
+    fileHandleChange = (e) => {
+        let fileList = [...e.fileList];
         fileList = fileList.slice(-1);
-
         // 2. Read from response and show file link
-        // fileList = fileList.map(file => {
-        //     if (file.response) {
-        //         // Component will show file.url as link
-        //         file.url = file.response.url;
-        //     }
-        //     return file;
-        // });
-
+        fileList = fileList.map(file => {
+            if (file.response) {
+                // Component will show file.url as link
+                file.url = file.response.url;
+            }
+            return file;
+        });
         this.setState({ fileList });
+    };
+    dummyRequest({ file, onSuccess }) {
+        setTimeout(() => {
+            onSuccess("ok");
+        }, 0);
+    }
+    onRemove = (e) => {
+        this.setState({
+            proof: null
+        })
+    }
+
+    beforeUpload = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (isJpgOrPng && isLt2M) {
+            this.getBase64(file, imageUrl => this.setState({ imageUrl }));
+            setTimeout(() => {
+                this.setState({ proof: this.state.imageUrl })
+                return false;
+            }, 100)
+        }
+        return new Promise((resolve, reject) => {
+            if (!isJpgOrPng) {
+                message.error({
+                    content: 'You can only upload JPG/PNG file!',
+                    className: 'custom-class',
+                    style: {
+                        zIndex: '1100'
+                    },
+                });
+                reject(file);
+            } else if (!isLt2M) {
+                message.error({
+                    content: 'Image must smaller than 2MB!',
+                    className: 'custom-class',
+                    style: {
+                        zIndex: '1100'
+                    },
+                });
+            }
+            else {
+                resolve(file);
+            }
+        });
+    }
+
+    getBase64 = (img, callback) => {
+        const reader = new FileReader();
+        reader.addEventListener("load", () =>
+            this.setState({ imageUrl: reader.result })
+        );
+        reader.readAsDataURL(img);
     };
 
 
     render() {
         var { users } = this.props.users
-        if (users.length != 0) {
+        if (users.length !== 0) {
             if (this.props.user != null) {
                 const id = this.props.user._id
                 users = users.filter(users => users._id !== id)
             }
         }
         const { Option } = Select;
-        const normFile = (e) => {
-            console.log('Upload event:', e);
+        const { Text } = Typography;
+        // const normFile = (e) => {
+        //     console.log('Upload event:', e);
 
-            if (Array.isArray(e)) {
-                return e;
-            }
+        //     if (Array.isArray(e)) {
+        //         return e;
+        //     }
 
-            return e && e.fileList;
-        };
+        //     return e && e.fileList;
+        // };
         return (
             <div>
                 <h4 className="mb-3 ml-4">Your Owe List</h4>
@@ -170,6 +226,7 @@ class OweModal extends Component {
                 <Modal
                     isOpen={this.state.modal}
                     toggle={this.toggle}
+                    centered={true}
                 >
                     <ModalHeader toggle={this.toggle}>Add New Owe</ModalHeader>
                     <ModalBody>
@@ -200,9 +257,6 @@ class OweModal extends Component {
                                     placeholder="Search Name"
                                     optionFilterProp="children"
                                     onChange={this.onChange}
-                                    //onFocus={onFocus}
-                                    //onBlur={onBlur}
-                                    //onSearch={onSearch}
                                     filterOption={(input, option) =>
                                         option.info.toLowerCase().indexOf(input.toLowerCase()) >= 0
                                     }
@@ -226,36 +280,33 @@ class OweModal extends Component {
                                     <option>Cupcake</option>
                                 </CustomInput>
                             </FormGroup>
+
                             {this.state.checked ?
-                                null
-                                : (<FormGroup>
-                                    <Label for="proof">Proof</Label>
-                                    <Input type="file" name="proof" id="proof" />
-                                    <FormText color="muted">
-                                        If you are a creditor, you need to upload evidence.
-                                        </FormText>
+                                null :
+                                (<FormGroup><Label for="proofLabel">Proof</Label>
+                                    <br />
+                                    <Upload
+                                        listType="picture"
+                                        fileList={this.state.fileList}
+                                        name="proof"
+                                        id="proof"
+                                        label="Proof"
+                                        valuePropName="fileList"
+                                        //getValueFromEvent={normFile}
+                                        extra="If you are a creditor, you need to upload evidence."
+                                        customRequest={this.dummyRequest}
+                                        onChange={this.fileHandleChange}
+                                        beforeUpload={this.beforeUpload}
+                                        onRemove={this.onRemove}
+                                        accept=".jpg,.png,.jpeg"
+                                    >
+                                        <Button type="button" icon={<UploadOutlined />}>Click to upload</Button>
+                                        <br />
+                                        <Text type="secondary">If you are a creditor, you need to upload evidence.
+                                         The file should be a image and less than 2MB.</Text>
+                                    </Upload>
+
                                 </FormGroup>)}
-
-                            <FormGroup>
-                                <Label for="proof">Proof</Label>
-                                <br />
-                                <Upload name="logo"
-                                    listType="picture"
-                                    fileList={this.state.fileList}
-                                    name="proof1"
-                                    label="Proof"
-                                    valuePropName="fileList"
-                                    getValueFromEvent={normFile}
-                                    extra="If you are a creditor, you need to upload evidence."
-                                    action='https://www.mocky.io/v2/5cc8019d300000980a055e76'
-                                    onChange={this.fileHandleChange}
-                                    accept=".jpg,.png,.bmp,.jpeg"
-                                //action="/upload.do"
-                                >
-                                    <Button type="button" icon={<UploadOutlined />}>Click to upload</Button>
-                                </Upload>
-                            </FormGroup>
-
                             <ModalFooter>
                                 <Button
                                     color="dark"
@@ -283,3 +334,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(mapStateToProps,
     { addOwe, clearErrors, getUsers })(OweModal);
+
+
