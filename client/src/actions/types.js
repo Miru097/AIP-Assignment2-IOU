@@ -17,3 +17,9 @@ export const CLEAR_ERRORS = 'CLAER_ERRORS';
 
 export const GET_USERS = 'GET_USERS';
 export const USERS_LOADING = 'USERS_LOADING';
+
+export const GET_REQUESTS = 'GET_REQUESTS';
+export const ADD_REQUEST = 'ADD_REQUEST';
+export const DELETE_REQUEST = 'DELETE_REQUEST';
+export const REQUESTS_LOADING = 'REQUESTS_LOADING';
+export const ADD_REQUEST_FAIL = 'ADD_REQUEST_FAIL';

@@ -7,17 +7,16 @@ import {
     TabContent,
     TabPane,
     Row,
-    Col,
-    Card,
-    CardTitle,
-    Button,
-    CardText
+    Col
 } from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import OweModal from './OweModal';
 import OwesList from './OwesList';
 import classnames from 'classnames';
+import RequestModal from './RequestModal';
+import RequestsList from './RequestsList';
+
 
 class TabBar extends Component {
     static propTypes = {
@@ -70,22 +69,12 @@ class TabBar extends Component {
                     </Nav>
                     <TabContent activeTab={this.state.activeTab} style={{ marginTop: '2rem' }}>
                         <TabPane tabId="1">
-                            <Row>
-                                <Col sm="6">
-                                    <Card body>
-                                        <CardTitle><h4>Title</h4></CardTitle>
-                                        <CardText>This is request description{this.props.isAuthenticated}..</CardText>
-                                        {this.props.isAuthenticated}
-                                        <Button className="mb-2 ml-3" color="secondary">Accept</Button>
-                                        <Button className="mb-2 ml-3" color="secondary">Update</Button>
-                                    </Card>
-                                </Col>
-                            </Row>
+                            <RequestModal />
+                            <RequestsList />
                         </TabPane>
                         <TabPane tabId="2">
                             <Row>
                                 <Col sm="12">
-
                                     <OweModal />
                                     <OwesList />
                                 </Col>

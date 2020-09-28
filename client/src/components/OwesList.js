@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Button, FormGroup, Label, } from 'reactstrap';
+import { Container, Button, FormGroup } from 'reactstrap';
 import { connect } from 'react-redux';
 import { getOwes, deleteOwe } from '../actions/oweActions';
 import PropTypes from 'prop-types';
