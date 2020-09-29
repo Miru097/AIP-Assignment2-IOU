@@ -49,7 +49,6 @@ class OwesList extends Component {
             message.error({
                 content: 'Please enter all fields'
             });
-            console.log("1")
             return
         } else {
             this.props.deleteOwe(this.state.currentOweId);

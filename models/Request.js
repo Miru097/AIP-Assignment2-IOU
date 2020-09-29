@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const RequestSchema = new Schema({
     creditor: {
         type: String,
-        required: true
+        //required: true
     },
     favor: {
         type: Array,

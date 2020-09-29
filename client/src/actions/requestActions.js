@@ -30,7 +30,7 @@ export const addRequest = request => (dispatch, getState) => {
         .catch(
             err => {
                 dispatch(
-                    returnErrors(err.response.data, err.response.status, 'ADD_FAIL')
+                    returnErrors(err.response.data, err.response.status, 'ADD_REQUEST_FAIL')
                 );
                 dispatch({
                     type: ADD_REQUEST_FAIL

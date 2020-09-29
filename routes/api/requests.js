@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
-
 const Request = require('../../models/Request');
 
 router.get('/', (req, res) => {
@@ -16,13 +15,13 @@ router.post('/', (req, res) => {
         favor: req.body.favor,
         debtor: req.body.debtor,
         creditor: req.body.creditor,
-        //proof: req.body.proof
+        proof: req.body.proof,
         description: req.body.description
     });
 
-    if (!favor || !debtor || !creditor) {
-        return res.status(400).json({ msg: 'Please enter all fields' });
-    }
+    // if (!favor || !debtor || !creditor) {
+    //     return res.status(400).json({ msg: 'Please enter all fields' });
+    // }
     // if (!checked && !proof) {
     //     return res.status(400).json({ msg: 'Please enter all fields' });
     // }

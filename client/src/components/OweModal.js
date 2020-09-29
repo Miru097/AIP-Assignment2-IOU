@@ -205,15 +205,6 @@ class OweModal extends Component {
         }
         const { Option } = Select;
         const { Text } = Typography;
-        // const normFile = (e) => {
-        //     console.log('Upload event:', e);
-
-        //     if (Array.isArray(e)) {
-        //         return e;
-        //     }
-
-        //     return e && e.fileList;
-        // };
         return (
             <div>
                 <h4 className="mb-3 ml-4">Your Owe List</h4>

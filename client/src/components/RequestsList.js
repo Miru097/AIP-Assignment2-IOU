@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'antd/dist/antd.css';
-import { Card, Avatar, Col, Row, Typography } from 'antd';
+import { Card, Avatar, Col, Row } from 'antd';
 import { EditOutlined, EllipsisOutlined, SettingOutlined } from '@ant-design/icons';
 import { getOwes } from '../actions/oweActions';
 
@@ -29,7 +29,7 @@ class RequestsList extends Component {
                                 actions={[
                                     <SettingOutlined key="setting" />,
                                     <EditOutlined key="edit" />,
-                                    <EllipsisOutlined key="ellipsis" />,
+                                    //<EllipsisOutlined key="ellipsis" />,
                                 ]}
                             >
 
