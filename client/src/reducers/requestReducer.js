@@ -1,4 +1,4 @@
-import { GET_REQUESTS, ADD_REQUEST, DELETE_REQUEST, REQUESTS_LOADING, ADD_REQUEST_FAIL } from '../actions/types';
+import { GET_REQUESTS, ADD_REQUEST, DELETE_REQUEST, REQUESTS_LOADING, ADD_REQUEST_FAIL, ACCEPT_REQUEST, UPDATE_REQUEST } from '../actions/types';
 const initialState = {
     requests: [],
     loading: false
@@ -32,6 +32,16 @@ export default function (state = initialState, action) {
                 ...state,
                 loading: true
             };
+        case ACCEPT_REQUEST:
+            return {
+                ...state,
+                requests: state.requests.filter(request => request._id !== action.payload)
+            }
+        case UPDATE_REQUEST:
+            return {
+                ...state,
+                requests: [...state.requests],
+            }
         default:
             return state;
     }

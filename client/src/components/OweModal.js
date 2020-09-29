@@ -130,10 +130,8 @@ class OweModal extends Component {
     fileHandleChange = (e) => {
         let fileList = [...e.fileList];
         fileList = fileList.slice(-1);
-        // 2. Read from response and show file link
         fileList = fileList.map(file => {
             if (file.response) {
-                // Component will show file.url as link
                 file.url = file.response.url;
             }
             return file;

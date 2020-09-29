@@ -248,7 +248,6 @@ class OwesList extends Component {
                         </List.Item>
                     )}
                 />
-
             </Container>
         );
     }

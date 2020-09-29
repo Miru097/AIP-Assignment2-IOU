@@ -69,8 +69,10 @@ class TabBar extends Component {
                     </Nav>
                     <TabContent activeTab={this.state.activeTab} style={{ marginTop: '2rem' }}>
                         <TabPane tabId="1">
-                            <RequestModal />
-                            <RequestsList />
+                            <Row>
+                                <RequestModal />
+                                <RequestsList />
+                            </Row>
                         </TabPane>
                         <TabPane tabId="2">
                             <Row>

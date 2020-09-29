@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from 'reactstrap';
-import { Select, Upload, message, Typography, Modal, Form, Input } from 'antd';
+import { Select, Upload, message, Typography, Modal, Form, Input, Row } from 'antd';
 import 'antd/dist/antd.css'
 import { UploadOutlined } from '@ant-design/icons';
 
@@ -31,7 +31,8 @@ class RequestModal extends Component {
             debtor: [this.props.user._id],
             favor: [],
             creditor: null,
-            description: null
+            description: null,
+            proof: null
         });
     };
     handleOk = (e) => {
@@ -123,82 +124,76 @@ class RequestModal extends Component {
         reader.readAsDataURL(img);
     };
     render() {
-
-        // var { users } = this.props.users
-        // if (users.length !== 0) {
-        //     if (this.props.user != null) {
-        //         const id = this.props.user._id
-        //         users = users.filter(users => users._id !== id)
-        //     }
-        // }
         const { Option } = Select;
         const { Text } = Typography;
         return (
             <div>
-                {this.props.isAuthenticated ? <Button
-                    color="dark"
-                    style={{ marginBottom: '2rem' }}
-                    onClick={this.showModal}
-                >Add New Request
+                <Row>
+                    {this.props.isAuthenticated ? <Button
+                        color="dark"
+                        style={{ marginBottom: '2rem' }}
+                        onClick={this.showModal}
+                    >Add New Request
                 </Button> : null}
-                <Modal
-                    title="Add New Request"
-                    visible={this.state.visible}
-                    onOk={this.handleOk}
-                    onCancel={this.handleCancel}
-                    destroyOnClose
-                    centered
-                    footer={[
-                        <Button key="back" onClick={this.handleCancel}>
-                            Return</Button>,
-                        <Button key="submit" type="primary" onClick={this.handleOk}>
-                            Submit</Button>,
-                    ]}
-                >
-                    <Form
-                        layout="vertical"
-                        name="addRequest"
+                    <Modal
+                        title="Add New Request"
+                        visible={this.state.visible}
+                        onOk={this.handleOk}
+                        onCancel={this.handleCancel}
+                        destroyOnClose
+                        centered
+                        footer={[
+                            <Button key="back" onClick={this.handleCancel}>
+                                Return</Button>,
+                            <Button key="submit" type="primary" onClick={this.handleOk}>
+                                Submit</Button>,
+                        ]}
                     >
-                        <Form.Item label="Description:">
-                            <Input placeholder="Your request description"
-                                name="description"
-                                onChange={this.DescriptionChange} />
-                        </Form.Item>
-                        <Form.Item label="Favor:">
-                            <Select
-                                placeholder="Select"
-                                onChange={this.FavorChange}
-                                name="favorSelect"
-                            //allowClear
-                            >
-                                <Option value="Coffee">Coffee</Option>
-                                <Option value="Chocolate">Chocolate</Option>
-                                <Option value="Mint">Mint</Option>
-                                <Option value="Pizza">Pizza</Option>
-                                <Option value="Cupcake">Cupcake</Option>
-                            </Select>
-                        </Form.Item>
-                        <p>Photo: </p>
-                        <Upload
-                            listType="picture"
-                            fileList={this.state.fileList}
-                            name="photo"
-                            id="photo"
-                            label="photo"
-                            valuePropName="fileList"
-                            customRequest={this.dummyRequest}
-                            onChange={this.fileHandleChange}
-                            beforeUpload={this.beforeUpload}
-                            onRemove={this.onRemove}
-                            accept=".jpg,.png,.jpeg"
+                        <Form
+                            layout="vertical"
+                            name="addRequest"
                         >
-                            <Button type="button" icon={<UploadOutlined />}>Click to upload</Button>
-                            <br />
-                            <Text type="secondary">You can upload a proof to show details.</Text>
-                        </Upload>
-                    </Form>
-                </Modal>
-
+                            <Form.Item label="Description:">
+                                <Input placeholder="Your request description"
+                                    name="description"
+                                    onChange={this.DescriptionChange} />
+                            </Form.Item>
+                            <Form.Item label="Favor:">
+                                <Select
+                                    placeholder="Select"
+                                    onChange={this.FavorChange}
+                                    name="favorSelect"
+                                //allowClear
+                                >
+                                    <Option value="Coffee">Coffee</Option>
+                                    <Option value="Chocolate">Chocolate</Option>
+                                    <Option value="Mint">Mint</Option>
+                                    <Option value="Pizza">Pizza</Option>
+                                    <Option value="Cupcake">Cupcake</Option>
+                                </Select>
+                                <Text type="secondary">You can add more favors after first submission with update button.</Text>
+                            </Form.Item>
+                            <p>Photo: </p>
+                            <Upload
+                                listType="picture"
+                                fileList={this.state.fileList}
+                                name="photo"
+                                id="photo"
+                                label="photo"
+                                valuePropName="fileList"
+                                customRequest={this.dummyRequest}
+                                onChange={this.fileHandleChange}
+                                beforeUpload={this.beforeUpload}
+                                onRemove={this.onRemove}
+                                accept=".jpg,.png,.jpeg"
+                            >
+                                <Button type="button" icon={<UploadOutlined />}>Click to upload</Button>
+                                <br />
+                                <Text type="secondary">You can upload a proof to show details.</Text>
+                            </Upload>
+                        </Form>
+                    </Modal>
+                </Row>
             </div >
         )
     }
@@ -208,8 +203,6 @@ const mapStateToProps = (state) => ({
     request: state.request,
     isAuthenticated: state.auth.isAuthenticated,
     user: state.auth.user,
-    error: state.error,
-    msg: state.error.msg,
     users: state.user
 });
 export default connect(mapStateToProps,

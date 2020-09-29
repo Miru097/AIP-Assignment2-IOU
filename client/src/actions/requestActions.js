@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_REQUESTS, ADD_REQUEST, DELETE_REQUEST, REQUESTS_LOADING, ADD_REQUEST_FAIL } from './types';
+import { GET_REQUESTS, ADD_REQUEST, DELETE_REQUEST, REQUESTS_LOADING, ADD_REQUEST_FAIL, ACCEPT_REQUEST, UPDATE_REQUEST } from './types';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 
@@ -51,6 +51,29 @@ export const deleteRequest = id => (dispatch, getState) => {
         );
 };
 
+export const acceptRequest = (id, request) => (dispatch, getState) => {
+    axios
+        .put(`/api/requests/${id}`, request, tokenConfig(getState))
+        .then(res => dispatch({
+            type: ACCEPT_REQUEST,
+            payload: id
+        }))
+        .catch(
+            err => dispatch(returnErrors(err.response.data, err.response.status))
+        );
+};
+
+export const updateRequest = (id, request) => (dispatch, getState) => {
+    axios
+        .put(`/api/requests/${id}`, request, tokenConfig(getState))
+        .then(res => dispatch({
+            type: UPDATE_REQUEST,
+            payload: id
+        }))
+        .catch(
+            err => dispatch(returnErrors(err.response.data, err.response.status))
+        );
+};
 
 
 export const setRequestsLoading = () => {

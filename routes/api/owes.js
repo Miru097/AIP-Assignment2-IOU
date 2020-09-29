@@ -6,7 +6,7 @@ const Owe = require('../../models/Owe');
 
 router.get('/', (req, res) => {
     Owe.find()
-        .sort({ date: -1 })
+        .sort({ date: 1 })
         .then(owe => res.json(owe));
 });
 
