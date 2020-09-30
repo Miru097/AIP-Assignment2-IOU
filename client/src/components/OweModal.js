@@ -157,7 +157,7 @@ class OweModal extends Component {
             setTimeout(() => {
                 this.setState({ proof: this.state.imageUrl })
                 return false;
-            }, 100)
+            }, 300)
         }
         return new Promise((resolve, reject) => {
             if (!isJpgOrPng) {

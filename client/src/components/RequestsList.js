@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import 'antd/dist/antd.css';
-import { Card, Col, Row, Image, Button, Pagination, Modal, Form, Select, message } from 'antd';
+import {
+    Card, Col, Row, Image, Button, Pagination, Popover,
+    Modal, Form, Select, message, Typography, Space
+} from 'antd';
 import { getRequests, acceptRequest, updateRequest } from '../actions/requestActions';
 import { getUsers } from '../actions/userActions';
 import { clearErrors } from '../actions/errorActions';
@@ -20,7 +23,8 @@ class RequestsList extends Component {
         maxValue: 12,
         numEachPage: 12,
         modalAcceptVisible: false,
-        modalUpdateVisible: false
+        modalUpdateVisible: false,
+        updateDisabled: true
     }
     componentDidMount() {
         this.props.getRequests();
@@ -42,7 +46,7 @@ class RequestsList extends Component {
             updateFavor: null,
             updateDebtor: null,
             nowFavor: favor,
-            nowDebtor: debtor
+            nowDebtor: debtor,
         });
     }
     handleUpdateCancel = e => {
@@ -75,6 +79,9 @@ class RequestsList extends Component {
                 const updateRequest = { favor, debtor };
                 this.props.updateRequest(this.state.updateId, updateRequest)
             }, 100)
+            setTimeout(() => {
+                window.location.reload()
+            }, 300);
         }
     }
 
@@ -103,13 +110,16 @@ class RequestsList extends Component {
         }, 100)
     }
 
+
     render() {
+        const { isAuthenticated } = this.props.auth;
+        const { Text, Paragraph } = Typography;
         const { Option } = Select;
         const { Meta } = Card;
         var { requests } = this.props.request;
         var { users } = this.props.users
         requests = requests.filter(requests => requests.creditor === null)
-        if (requests.length > 0) {
+        if (requests.length !== 0) {
             if (users.length !== 0) {
                 for (let i = 0; i < requests.length; i++) {
                     var value = []
@@ -124,8 +134,8 @@ class RequestsList extends Component {
                     }
                 }
             }
-            console.log(requests)
         }
+
 
         return (
             <div className="container">
@@ -162,15 +172,17 @@ class RequestsList extends Component {
                                             }
                                         }
                                         actions={[
-                                            <Button
-                                                type="default"
-                                                shape="round"
-                                                key="update"
-                                                disabled={this.props.isAuthenticated ? false : true}
-                                                onClick={this.showUpdateModal.bind(this, _id, favor, debtor)}
-                                            >
-                                                Update
-                                        </Button>,
+                                            <Popover content="There are up to five favors for one request." placement="bottom" trigger="hover">
+                                                <Button
+                                                    type="default"
+                                                    shape="round"
+                                                    key="update"
+                                                    disabled={this.props.isAuthenticated && favor.length < 5 ? false : true}
+                                                    onClick={this.showUpdateModal.bind(this, _id, favor, debtor)}
+                                                >
+                                                    Update
+                                                </Button>
+                                            </Popover>,
                                             <Button
                                                 type="default"
                                                 shape="round"
@@ -179,18 +191,22 @@ class RequestsList extends Component {
                                                 onClick={this.showAcceptModal.bind(this, _id)}
                                             >
                                                 Accept
-                                        </Button>,
+                                            </Button>,
                                         ]}
                                     >
                                         <Meta
                                             title={this.firstUpperCase(description)}
-                                            description={"This is the description" + favor}
+                                        //description={"This is the description" + favor}
                                         />
-                                        {favor[0] === undefined ? null : <p>{debtorName[0]} will give you a {favor[0]}.</p>}
-                                        {favor.length > 1 ? <p>And more...</p> : null}
-                                        {favor[1] === undefined ? null : <p>{debtorName[1]} will give you a {favor[1]}.</p>}
-                                        {favor[2] === undefined ? null : <p>{debtorName[2]} will give you a {favor[2]}.</p>}
-                                        {favor[3] === undefined ? null : <p>{debtorName[3]} will give you a {favor[3]}.</p>}
+                                        <Space direction="vertical">
+                                            {favor[0] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[0])} will give you a {favor[0]}.</Text>}
+                                            {favor[1] !== undefined ? (<Paragraph ellipsis={{ rows: 1, expandable: true, symbol: 'And more...' }}>
+                                                {favor[1] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[1])} will give you a {favor[1]}.<br /></Text>}
+                                                {favor[2] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[2])} will give you a {favor[2]}.<br /></Text>}
+                                                {favor[3] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[3])} will give you a {favor[3]}.<br /></Text>}
+                                                {favor[4] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[4])} will give you a {favor[4]}.<br /></Text>}
+                                            </Paragraph>) : null}
+                                        </Space>
                                     </Card>
 
                                 </Col>
@@ -238,6 +254,7 @@ class RequestsList extends Component {
                                 <Option value="Pizza">Pizza</Option>
                                 <Option value="Cupcake">Cupcake</Option>
                             </Select>
+                            <Text type="secondary">There are up to five favors for one request.</Text>
                         </Form.Item>
                     </Form>
                 </Modal>

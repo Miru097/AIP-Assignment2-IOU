@@ -32,7 +32,8 @@ class RequestModal extends Component {
             favor: [],
             creditor: null,
             description: null,
-            proof: null
+            proof: null,
+            fileList: []
         });
     };
     handleOk = (e) => {
@@ -89,7 +90,7 @@ class RequestModal extends Component {
             setTimeout(() => {
                 this.setState({ proof: this.state.imageUrl })
                 return false;
-            }, 100)
+            }, 300)
         }
         return new Promise((resolve, reject) => {
             if (!isJpgOrPng) {
