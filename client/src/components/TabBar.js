@@ -16,6 +16,7 @@ import OwesList from './OwesList';
 import classnames from 'classnames';
 import RequestModal from './RequestModal';
 import RequestsList from './RequestsList';
+import TasksLists from './TasksLists';
 
 
 class TabBar extends Component {
@@ -44,6 +45,16 @@ class TabBar extends Component {
                     </NavLink>
             </NavItem>
         );
+        const authRequestlink = (
+            <NavItem >
+                <NavLink
+                    className={classnames({ active: this.state.activeTab === '4' })}
+                    onClick={() => { this.toggle('4'); }}
+                >
+                    Task
+                    </NavLink>
+            </NavItem>
+        );
         return (
             //<Provider store={store}>
             <div>
@@ -66,6 +77,7 @@ class TabBar extends Component {
                                 Ranking
                             </NavLink>
                         </NavItem>
+                        {isAuthenticated ? authRequestlink : null}
                     </Nav>
                     <TabContent activeTab={this.state.activeTab} style={{ marginTop: '2rem' }}>
                         <TabPane tabId="1">
@@ -83,6 +95,9 @@ class TabBar extends Component {
                             </Row>
                         </TabPane>
                         <TabPane tabId="3">
+                        </TabPane>
+                        <TabPane tabId="4">
+                            <TasksLists />
                         </TabPane>
                     </TabContent>
                 </Container>

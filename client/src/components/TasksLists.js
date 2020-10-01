@@ -1,135 +1,141 @@
 import React, { Component } from 'react';
+import { Container, FormGroup } from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import 'antd/dist/antd.css';
+import { UploadOutlined } from '@ant-design/icons';
 import {
-    Card, Col, Row, Image, Button, Pagination, Popover,
-    Modal, Form, Select, message, Typography, Space
+    Card, Col, Row, Image, Button, Pagination,
+    Modal, Form, Select, message, Typography, Space, Upload
 } from 'antd';
-import { getRequests, acceptRequest, updateRequest } from '../actions/requestActions';
-import { getUsers } from '../actions/userActions';
-import { clearErrors } from '../actions/errorActions';
 
 
-class RequestsList extends Component {
+class TasksLists extends Component {
+
     static propTypes = {
-        isAuthenticated: PropTypes.bool,
-        clearErrors: PropTypes.func.isRequired,
-        acceptRequest: PropTypes.func.isRequired
-    };
-
-    state = {
-        minValue: 0,
-        maxValue: 12,
-        numEachPage: 12,
-        modalAcceptVisible: false,
-        modalUpdateVisible: false,
-        updateDisabled: true
+        isAuthenticated: PropTypes.bool
     }
     componentDidMount() {
-        this.props.getRequests();
     }
+    state = {
+        visible: false,
+        currentDebtor: null,
+        currentOweId: null,
+        imageUrl: null,
+        fileList: [],
+        file: null
+    };
+    // onDeleteClick = (id) => {
+    //     this.props.deleteOwe(id);
+    // }
     firstUpperCase = (str) => {
         return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase())
     }
-    pageHandleChange = (e) => {
+    showModal = (id, debtor) => {
         this.setState({
-            minValue: (e - 1) * this.state.numEachPage,
-            maxValue: e * this.state.numEachPage
-        });
-    }
-    showUpdateModal = (_id, favor, debtor) => {
-        this.props.clearErrors();
-        this.setState({
-            modalUpdateVisible: true,
-            updateId: _id,
-            updateFavor: null,
-            updateDebtor: null,
-            nowFavor: favor,
-            nowDebtor: debtor,
-        });
-    }
-    handleUpdateCancel = e => {
-        this.setState({
-            modalUpdateVisible: false,
-            favor: this.state.nowFavor,
-            debtor: this.state.nowDebtor
+            visible: true,
+            currentDebtor: debtor,
+            currentOweId: id,
+            imageUrl: null,
+            fileList: [],
+            file: null
         });
     };
-    updateFavor = (e) => {
-        this.setState({
-            updateFavor: e,
-            updateDebtor: this.props.user._id
-        });
-    }
-    handleUpdateOk = () => {
-        if (this.state.updateFavor === null || this.state.updateDebtor === null) {
+    handleOk = e => {
+        if (this.state.currentDebtor === this.props.user._id && this.state.imageUrl === null) {
             message.error({
                 content: 'Please enter all fields'
             });
             return
         } else {
+            this.props.deleteOwe(this.state.currentOweId);
             this.setState({
-                favor: [...this.state.nowFavor, this.state.updateFavor],
-                debtor: [...this.state.nowDebtor, this.state.updateDebtor],
-                modalUpdateVisible: false,
-            })
-            setTimeout(() => {
-                const { favor, debtor } = this.state;
-                const updateRequest = { favor, debtor };
-                this.props.updateRequest(this.state.updateId, updateRequest)
-            }, 100)
-            setTimeout(() => {
-                window.location.reload()
-            }, 300);
+                visible: false,
+            });
         }
-    }
 
-    showAcceptModal = (_id, debtor) => {
-        this.props.clearErrors();
+    };
+    handleCancel = e => {
         this.setState({
-            modalAcceptVisible: true,
-            creditor: null,
-            acceptId: _id,
-            acceptDebtor: debtor
-        });
-
-    }
-    handleAcceptCancel = e => {
-        this.setState({
-            modalAcceptVisible: false,
+            visible: false,
         });
     };
-    handleAcceptOk = e => {
-        for (let index = 0; index < this.state.acceptDebtor.length; index++) {
-            if (this.state.acceptDebtor[index] === this.props.user._id) {
-                message.error({
-                    content: 'You cannot accept your request!'
-                });
-                return
-            } else {
-                this.setState({
-                    modalAcceptVisible: false,
-                    creditor: this.props.user._id
-                });
-                setTimeout(() => {
-                    const { creditor } = this.state;
-                    const acceptRequest = { creditor };
-                    this.props.acceptRequest(this.state.acceptId, acceptRequest)
-                }, 100)
+    dummyRequest({ file, onSuccess }) {
+        setTimeout(() => {
+            onSuccess("ok");
+        }, 0);
+    }
+    fileHandleChange = (e) => {
+        let fileList = [...e.fileList];
+        fileList = fileList.slice(-1);
+        fileList = fileList.map(file => {
+            if (file.response) {
+                file.url = file.response.url;
             }
+            return file;
+        });
+        this.setState({ fileList });
+    };
+    beforeUpload = (file) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (isJpgOrPng && isLt2M) {
+            this.getBase64(file, imageUrl => this.setState({ imageUrl }));
+            setTimeout(() => {
+                this.setState({ proof: this.state.imageUrl })
+                return false;
+            }, 300)
         }
+        return new Promise((resolve, reject) => {
+            if (!isJpgOrPng) {
+                message.error({
+                    content: 'You can only upload JPG/PNG file!',
+                    className: 'custom-class',
+                    style: {
+                        zIndex: '1100'
+                    },
+                });
+                reject(file);
+            } else if (!isLt2M) {
+                message.error({
+                    content: 'Image must smaller than 2MB!',
+                    className: 'custom-class',
+                    style: {
+                        zIndex: '1100'
+                    },
+                });
+            }
+            else {
+                resolve(file);
+            }
+        });
     }
 
+    getBase64 = (img, callback) => {
+        const reader = new FileReader();
+        reader.addEventListener("load", () =>
+            this.setState({ imageUrl: reader.result })
+        );
+        reader.readAsDataURL(img);
+    };
+    onRemove = (e) => {
+        this.setState({
+            proof: null,
+            imageUrl: null
+        })
+    }
 
     render() {
-        const { isAuthenticated } = this.props.auth;
         const { Text, Paragraph } = Typography;
         const { Option } = Select;
         const { Meta } = Card;
         var { requests } = this.props.request;
         var { users } = this.props.users
-        requests = requests.filter(requests => requests.creditor === null)
+        if (users.length !== 0) {
+            if (this.props.user != null) {
+                const id = this.props.user._id
+                requests = requests.filter(requests => requests.creditor === id)
+            }
+        }
         if (requests.length !== 0) {
             if (users.length !== 0) {
                 for (let i = 0; i < requests.length; i++) {
@@ -148,10 +154,9 @@ class RequestsList extends Component {
                         });
                     }
                 }
+
             }
         }
-
-
 
         return (
             <div className="container">
@@ -188,42 +193,28 @@ class RequestsList extends Component {
                                             }
                                         }
                                         actions={[
-                                            <Popover content="There are up to five favors for one request." placement="bottom" trigger="hover">
-                                                <Button
-                                                    type="default"
-                                                    shape="round"
-                                                    key="update"
-                                                    disabled={this.props.isAuthenticated && favor.length < 5 ? false : true}
-                                                    onClick={this.showUpdateModal.bind(this, _id, favor, debtor)}
-                                                >
-                                                    Update
-                                                </Button>
-                                            </Popover>,
                                             <Button
                                                 type="default"
                                                 shape="round"
-                                                key="accept"
-                                                disabled={(this.props.isAuthenticated) ? false : true}
-                                                onClick={this.showAcceptModal.bind(this, _id, debtor)}
+                                                key="complete"
+                                            //onClick={this.showCompeleteModal.bind(this, _id, favor, debtor)}
                                             >
-                                                Accept
+                                                Complete
                                             </Button>,
+                                            <Button
+                                                type="default"
+                                                shape="round"
+                                                key="cancel"
+                                            //onClick={this.showCancelModal.bind(this, _id)}
+                                            >
+                                                Cancel
+                                        </Button>,
                                         ]}
                                     >
                                         <Meta
                                             title={this.firstUpperCase(description)}
                                         //description={"This is the description" + favor}
                                         />
-                                        {/* {debtorName !== undefined ?
-                                            (<Space direction="vertical">
-                                                {favor[0] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[0])} will give you a {favor[0]}.</Text>}
-                                                {favor[1] !== undefined ? (<Paragraph ellipsis={{ rows: 1, expandable: true, symbol: 'And more...' }}>
-                                                    {favor[1] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[1])} will give you a {favor[1]}.<br /></Text>}
-                                                    {favor[2] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[2])} will give you a {favor[2]}.<br /></Text>}
-                                                    {favor[3] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[3])} will give you a {favor[3]}.<br /></Text>}
-                                                    {favor[4] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[4])} will give you a {favor[4]}.<br /></Text>}
-                                                </Paragraph>) : null}
-                                            </Space>) : null} */}
                                         <Paragraph ellipsis={{ rows: 3, expandable: true, symbol: 'And more...' }}>
                                             <Space direction="vertical">
                                                 {content}
@@ -299,11 +290,17 @@ class RequestsList extends Component {
         )
     }
 }
+
+
 const mapStateToProps = (state) => ({
-    request: state.request,
     isAuthenticated: state.auth.isAuthenticated,
     users: state.user,
     user: state.auth.user,
     auth: state.auth,
+    request: state.request,
 });
-export default connect(mapStateToProps, { getRequests, getUsers, clearErrors, acceptRequest, updateRequest })(RequestsList);
+
+export default connect(
+    mapStateToProps,
+    {}
+)(TasksLists);

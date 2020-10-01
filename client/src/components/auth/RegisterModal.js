@@ -73,6 +73,13 @@ class RegisterModal extends Component {
         };
         //Attempt to register
         this.props.register(newUser);
+        setTimeout(() => {
+            if (this.state.msg !== null) {
+                return
+            } else {
+                window.location.reload()
+            }
+        }, 300);
     };
 
     render() {

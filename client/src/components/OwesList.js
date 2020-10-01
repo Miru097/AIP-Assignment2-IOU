@@ -202,7 +202,7 @@ class OwesList extends Component {
                                 title={owes.oweDate}
                             //description={owes.debtor}
                             />
-                            {isAuthenticated ? (
+                            {(isAuthenticated && owes.debtorName !== undefined && owes.creditorName !== undefined) ? (
                                 <Text strong type="default">
                                     {this.firstUpperCase(owes.debtorName)} owes {owes.creditorName} a {owes.favor}
                                 </Text>) : null}
@@ -222,7 +222,7 @@ class OwesList extends Component {
                                 ]}
                             >
                                 <p>Are you sure to delete this owe?</p>
-                                {isAuthenticated && this.props.user._id === this.state.currentDebtor ?
+                                {(isAuthenticated && this.props.user._id === this.state.currentDebtor) ?
                                     (<FormGroup><p>Proof: </p>
                                         <Upload
                                             listType="picture"
