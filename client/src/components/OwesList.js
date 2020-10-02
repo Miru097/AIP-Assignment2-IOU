@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { getUsers } from '../actions/userActions';
 import { Image, Modal, List, Typography, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-
+import { clearErrors } from '../actions/errorActions';
 
 
 class OwesList extends Component {
@@ -14,7 +14,8 @@ class OwesList extends Component {
     static propTypes = {
         getOwes: PropTypes.func.isRequired,
         owe: PropTypes.object.isRequired,
-        isAuthenticated: PropTypes.bool
+        isAuthenticated: PropTypes.bool,
+        error: PropTypes.object.isRequired,
     }
     componentDidMount() {
         this.props.getOwes();
@@ -26,8 +27,24 @@ class OwesList extends Component {
         currentOweId: null,
         imageUrl: null,
         fileList: [],
-        file: null
+        file: null,
+        msg: null
     };
+
+    componentDidUpdate(prevProps) {
+        const { error } = this.props;
+        if (error !== prevProps.error) {
+            // Check for register error
+            if (error.id === 'DELETE_FAIL') {
+                this.setState({ msg: error.msg.msg });
+                console.log(this.state.msg)
+            } else {
+                this.setState({ msg: null });
+            }
+        }
+
+    }
+
     // onDeleteClick = (id) => {
     //     this.props.deleteOwe(id);
     // }
@@ -35,13 +52,15 @@ class OwesList extends Component {
         return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase())
     }
     showModal = (id, debtor) => {
+        this.props.clearErrors();
         this.setState({
             visible: true,
             currentDebtor: debtor,
             currentOweId: id,
             imageUrl: null,
             fileList: [],
-            file: null
+            file: null,
+            msg: null
         });
     };
     handleOk = e => {
@@ -55,6 +74,20 @@ class OwesList extends Component {
             this.setState({
                 visible: false,
             });
+            setTimeout(() => {
+                if (this.state.msg !== null) {
+                    message.error({
+                        content: 'This owe is not exist! This page will refresh in 3 seconds!'
+                    }, 3);
+                    setTimeout(() => {
+                        {
+                            window.location.reload()
+                        }
+                    }, 3000)
+                }
+
+            }, 300)
+
         }
 
     };
@@ -260,9 +293,11 @@ const mapStateToProps = (state) => ({
     users: state.user,
     user: state.auth.user,
     auth: state.auth,
+    error: state.error,
+    msg: state.error.msg,
 });
 
 export default connect(
     mapStateToProps,
-    { getOwes, deleteOwe, getUsers }
+    { getOwes, deleteOwe, getUsers, clearErrors }
 )(OwesList);

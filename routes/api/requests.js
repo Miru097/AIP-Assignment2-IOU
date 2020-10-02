@@ -30,14 +30,14 @@ router.post('/', (req, res) => {
 
 router.delete('/:id', auth, (req, res) => {
     Request.findById(req.params.id)
-        .then(request => request.remove().then(() => res.json({ success: true })))
-        .catch(err => res.status(404).json({ success: false }));
+        .then(request => request.remove().then(() => res.json({ msg: true })))
+        .catch(err => res.status(404).json({ msg: false }));
 });
 
 router.put('/:id', (req, res) => {
     Request.findByIdAndUpdate(req.params.id, req.body)
         .then(request => res.json(request))
-        .catch(err => res.status(404).json({ success: false }));
+        .catch(err => res.status(404).json({ msg: false }));
 });
 
 

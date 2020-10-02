@@ -3,6 +3,7 @@ export const ADD_OWE = 'ADD_OWE';
 export const ADD_FAIL = 'ADD_FAIL';
 export const DELETE_OWE = 'DELETE_OWE';
 export const OWES_LOADING = 'OWES_LOADING';
+export const DELETE_FAIL = 'DELETE_FAIL';
 
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAIL = 'REGISTER_FAIL';

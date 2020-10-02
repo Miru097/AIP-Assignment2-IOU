@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Container, FormGroup } from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { UploadOutlined } from '@ant-design/icons';
@@ -8,57 +7,93 @@ import {
     Modal, Form, Select, message, Typography, Space, Upload
 } from 'antd';
 
+import { acceptRequest } from '../actions/requestActions';
+import { addOwe } from '../actions/oweActions';
+
 
 class TasksLists extends Component {
 
     static propTypes = {
-        isAuthenticated: PropTypes.bool
+        isAuthenticated: PropTypes.bool,
+        addOwe: PropTypes.func.isRequired
     }
-    componentDidMount() {
-    }
+
     state = {
-        visible: false,
-        currentDebtor: null,
-        currentOweId: null,
-        imageUrl: null,
-        fileList: [],
-        file: null
+        modalCancelVisible: false,
+        modalCompleteVisible: false
     };
-    // onDeleteClick = (id) => {
-    //     this.props.deleteOwe(id);
-    // }
     firstUpperCase = (str) => {
         return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase())
     }
-    showModal = (id, debtor) => {
+
+    showCompleteModal = (_id, favor, debtor) => {
         this.setState({
-            visible: true,
-            currentDebtor: debtor,
-            currentOweId: id,
-            imageUrl: null,
-            fileList: [],
-            file: null
+            modalCompleteVisible: true,
+            CompleteId: _id,
+            CompleteFavor: null,
+            CompleteDebtor: null,
+            nowFavor: favor,
+            nowDebtor: debtor,
+        });
+    }
+    handleCompleteCancel = e => {
+        this.setState({
+            modalCompleteVisible: false,
+            favor: this.state.nowFavor,
+            debtor: this.state.nowDebtor
         });
     };
-    handleOk = e => {
-        if (this.state.currentDebtor === this.props.user._id && this.state.imageUrl === null) {
+    CompleteFavor = (e) => {
+        this.setState({
+            CompleteFavor: e,
+            CompleteDebtor: this.props.user._id
+        });
+    }
+    handleCompleteOk = () => {
+        if (this.state.CompleteFavor === null || this.state.CompleteDebtor === null) {
             message.error({
                 content: 'Please enter all fields'
             });
             return
         } else {
-            this.props.deleteOwe(this.state.currentOweId);
             this.setState({
-                visible: false,
-            });
+                favor: [...this.state.nowFavor, this.state.CompleteFavor],
+                debtor: [...this.state.nowDebtor, this.state.CompleteDebtor],
+                modalCompleteVisible: false,
+            })
+            setTimeout(() => {
+                const { favor, debtor } = this.state;
+                const CompleteRequest = { favor, debtor };
+                this.props.CompleteRequest(this.state.CompleteId, CompleteRequest)
+            }, 100)
+            setTimeout(() => {
+                window.location.reload()
+            }, 300);
         }
+    }
 
-    };
-    handleCancel = e => {
+    showCancelModal = (_id) => {
         this.setState({
-            visible: false,
+            modalCancelVisible: true,
+            creditor: null,
+            cancelId: _id,
+        });
+    }
+    handleCancelCancel = e => {
+        this.setState({
+            modalCancelVisible: false,
         });
     };
+    handleCancelOk = e => {
+        this.setState({
+            modalCancelVisible: false
+        });
+        setTimeout(() => {
+            const { creditor } = this.state;
+            const cancelRequest = { creditor };
+            this.props.acceptRequest(this.state.cancelId, cancelRequest)
+        }, 100)
+    }
     dummyRequest({ file, onSuccess }) {
         setTimeout(() => {
             onSuccess("ok");
@@ -197,7 +232,7 @@ class TasksLists extends Component {
                                                 type="default"
                                                 shape="round"
                                                 key="complete"
-                                            //onClick={this.showCompeleteModal.bind(this, _id, favor, debtor)}
+                                                onClick={this.showCompleteModal.bind(this, _id, favor, debtor)}
                                             >
                                                 Complete
                                             </Button>,
@@ -205,7 +240,7 @@ class TasksLists extends Component {
                                                 type="default"
                                                 shape="round"
                                                 key="cancel"
-                                            //onClick={this.showCancelModal.bind(this, _id)}
+                                                onClick={this.showCancelModal.bind(this, _id)}
                                             >
                                                 Cancel
                                         </Button>,
@@ -232,59 +267,45 @@ class TasksLists extends Component {
                     showTotal={total => `Total ${total} requests`}
                 />
                 <Modal
-                    title="Update this request"
+                    title="Complete this request"
                     centered
-                    visible={this.state.modalUpdateVisible}
-                    onOk={this.handleUpdateOk}
-                    onCancel={this.handleUpdateCancel}
+                    visible={this.state.modalCompleteVisible}
+                    onOk={this.handleCompleteOk}
+                    onCancel={this.handleCompleteCancel}
                     destroyOnClose
                     footer={[
                         <Button key="back"
-                            onClick={this.handleUpdateCancel}
+                            onClick={this.handleCompleteCancel}
                         >
                             Return</Button>,
-                        <Button key="updateFavor" type="default"
-                            onClick={this.handleUpdateOk}
+                        <Button key="completeFavor" type="default"
+                            onClick={this.handleCompleteOk}
                         >
-                            Update</Button>,
+                            Complete</Button>,
                     ]}
                 >
                     <Form
                         layout="vertical"
-                        name="updateRequest"
+                        name="completeRequest"
                     >
-                        <Form.Item label="What favor do you want to add:">
-                            <Select
-                                placeholder="Select"
-                                onChange={this.updateFavor}
-                                name="favorSelect"
-                            //allowClear
-                            >
-                                <Option value="Coffee">Coffee</Option>
-                                <Option value="Chocolate">Chocolate</Option>
-                                <Option value="Mint">Mint</Option>
-                                <Option value="Pizza">Pizza</Option>
-                                <Option value="Cupcake">Cupcake</Option>
-                            </Select>
-                            <Text type="secondary">There are up to five favors for one request.</Text>
-                        </Form.Item>
+
                     </Form>
                 </Modal>
                 <Modal
-                    title="Accept this request"
+                    title="Cancel this request"
                     centered
-                    visible={this.state.modalAcceptVisible}
-                    onOk={this.handleAcceptOk}
-                    onCancel={this.handleAcceptCancel}
+                    visible={this.state.modalCancelVisible}
+                    onOk={this.handleCancelOk}
+                    onCancel={this.handleCancelCancel}
                     destroyOnClose
                     footer={[
-                        <Button key="back" onClick={this.handleAcceptCancel}>
+                        <Button key="back" onClick={this.handleCancelCancel}>
                             Return</Button>,
-                        <Button key="acceptAgain" type="default" onClick={this.handleAcceptOk}>
-                            Accept</Button>,
+                        <Button key="acceptAgain" type="default" onClick={this.handleCancelOk}>
+                            Cancel</Button>,
                     ]}
                 >
-                    <p>Are you sure to accept this request?</p>
+                    <p>Are you sure to cancel this request?</p>
                 </Modal>
             </div >
         )
@@ -302,5 +323,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(
     mapStateToProps,
-    {}
+    { acceptRequest, addOwe }
 )(TasksLists);

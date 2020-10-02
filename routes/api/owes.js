@@ -30,8 +30,8 @@ router.post('/', auth, (req, res) => {
 
 router.delete('/:id', auth, (req, res) => {
     Owe.findById(req.params.id)
-        .then(owe => owe.remove().then(() => res.json({ success: true })))
-        .catch(err => res.status(404).json({ success: false }));
+        .then(owe => owe.remove().then(() => res.json({ msg: true })))
+        .catch(err => res.status(404).json({ msg: 'It had be deleted!' }));
 });
 
 module.exports = router;

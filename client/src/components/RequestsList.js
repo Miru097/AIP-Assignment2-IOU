@@ -11,6 +11,7 @@ import { getUsers } from '../actions/userActions';
 import { clearErrors } from '../actions/errorActions';
 
 
+
 class RequestsList extends Component {
     static propTypes = {
         isAuthenticated: PropTypes.bool,
@@ -123,7 +124,6 @@ class RequestsList extends Component {
 
 
     render() {
-        const { isAuthenticated } = this.props.auth;
         const { Text, Paragraph } = Typography;
         const { Option } = Select;
         const { Meta } = Card;

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { GET_OWES, ADD_OWE, DELETE_OWE, OWES_LOADING, ADD_FAIL } from './types';
+import { GET_OWES, ADD_OWE, DELETE_OWE, OWES_LOADING, ADD_FAIL, DELETE_FAIL } from './types';
 import { tokenConfig } from './authActions';
 import { returnErrors } from './errorActions';
 
@@ -47,8 +47,14 @@ export const deleteOwe = id => (dispatch, getState) => {
       payload: id
     }))
     .catch(
-      err => dispatch(returnErrors(err.response.data, err.response.status))
-    );
+      err => {
+        dispatch(
+          returnErrors(err.response.data, err.response.status, 'DELETE_FAIL')
+        );
+        dispatch({
+          type: DELETE_FAIL
+        });
+      });
 };
 
 

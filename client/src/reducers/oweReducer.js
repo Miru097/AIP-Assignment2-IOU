@@ -1,5 +1,4 @@
-//import { v4 as uuidv4 } from 'uuid';
-import { GET_OWES, ADD_OWE, DELETE_OWE, OWES_LOADING, ADD_FAIL } from '../actions/types';
+import { GET_OWES, ADD_OWE, DELETE_OWE, OWES_LOADING, DELETE_FAIL, ADD_FAIL } from '../actions/types';
 const initialState = {
     owes: [],
     loading: false
@@ -33,6 +32,10 @@ export default function (state = initialState, action) {
                 ...state,
                 loading: true
             };
+        case DELETE_FAIL:
+            return {
+                ...state,
+            }
         default:
             return state;
     }
