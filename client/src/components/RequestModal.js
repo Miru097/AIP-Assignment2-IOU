@@ -128,7 +128,7 @@ class RequestModal extends Component {
         const { Option } = Select;
         const { Text } = Typography;
         return (
-            <div>
+            <div className="container">
                 <Row>
                     {this.props.isAuthenticated ? <Button
                         color="dark"

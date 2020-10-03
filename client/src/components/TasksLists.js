@@ -7,20 +7,28 @@ import {
     Modal, Form, Select, message, Typography, Space, Upload
 } from 'antd';
 
-import { acceptRequest } from '../actions/requestActions';
+import { acceptRequest, deleteRequest } from '../actions/requestActions';
 import { addOwe } from '../actions/oweActions';
+import { FormGroup } from 'reactstrap';
 
 
 class TasksLists extends Component {
 
     static propTypes = {
         isAuthenticated: PropTypes.bool,
-        addOwe: PropTypes.func.isRequired
+        addOwe: PropTypes.func.isRequired,
+        deleteRequest: PropTypes.func.isRequired,
     }
 
     state = {
         modalCancelVisible: false,
-        modalCompleteVisible: false
+        modalCompleteVisible: false,
+        CompleteFavor: [],
+        CompleteDebtor: [],
+        proof: null,
+        imageUrl: null,
+        fileList: [],
+        CompleteCreditor: null
     };
     firstUpperCase = (str) => {
         return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase())
@@ -30,45 +38,46 @@ class TasksLists extends Component {
         this.setState({
             modalCompleteVisible: true,
             CompleteId: _id,
-            CompleteFavor: null,
-            CompleteDebtor: null,
-            nowFavor: favor,
-            nowDebtor: debtor,
+            CompleteFavor: favor,
+            CompleteDebtor: debtor,
+            proof: null,
+            imageUrl: null,
+            fileList: [],
+            CompleteCreditor: this.props.user._id
         });
     }
     handleCompleteCancel = e => {
         this.setState({
             modalCompleteVisible: false,
-            favor: this.state.nowFavor,
-            debtor: this.state.nowDebtor
         });
     };
-    CompleteFavor = (e) => {
-        this.setState({
-            CompleteFavor: e,
-            CompleteDebtor: this.props.user._id
-        });
-    }
+
     handleCompleteOk = () => {
-        if (this.state.CompleteFavor === null || this.state.CompleteDebtor === null) {
+        if (this.state.proof === null) {
             message.error({
                 content: 'Please enter all fields'
             });
             return
         } else {
+            for (let index = 0; index < this.state.CompleteFavor.length; index++) {
+                const favor = this.state.CompleteFavor[index]
+                const debtor = this.state.CompleteDebtor[index]
+                const creditor = this.state.CompleteCreditor
+                const proof = this.state.proof
+                const newOwe = {
+                    favor,
+                    debtor,
+                    creditor,
+                    proof
+                };
+                setTimeout(() => {
+                    this.props.addOwe(newOwe);
+                }, 100)
+            }
+            this.props.deleteRequest(this.state.CompleteId)
             this.setState({
-                favor: [...this.state.nowFavor, this.state.CompleteFavor],
-                debtor: [...this.state.nowDebtor, this.state.CompleteDebtor],
                 modalCompleteVisible: false,
-            })
-            setTimeout(() => {
-                const { favor, debtor } = this.state;
-                const CompleteRequest = { favor, debtor };
-                this.props.CompleteRequest(this.state.CompleteId, CompleteRequest)
-            }, 100)
-            setTimeout(() => {
-                window.location.reload()
-            }, 300);
+            });
         }
     }
 
@@ -93,6 +102,11 @@ class TasksLists extends Component {
             const cancelRequest = { creditor };
             this.props.acceptRequest(this.state.cancelId, cancelRequest)
         }, 100)
+        setTimeout(() => {
+            {
+                window.location.reload()
+            }
+        }, 300)
     }
     dummyRequest({ file, onSuccess }) {
         setTimeout(() => {
@@ -161,7 +175,6 @@ class TasksLists extends Component {
 
     render() {
         const { Text, Paragraph } = Typography;
-        const { Option } = Select;
         const { Meta } = Card;
         var { requests } = this.props.request;
         var { users } = this.props.users
@@ -200,7 +213,7 @@ class TasksLists extends Component {
                         requests &&
                         requests.length > 0 &&
                         requests.slice(this.state.minValue, this.state.maxValue)
-                            .map(({ description, favor, _id, proof, debtor, debtorName, content }) => (
+                            .map(({ description, favor, _id, proof, debtor, content }) => (
                                 <Col
                                     xs={{ span: 16, offset: 1 }}
                                     sm={{ span: 12, offset: 1 }}
@@ -278,7 +291,7 @@ class TasksLists extends Component {
                             onClick={this.handleCompleteCancel}
                         >
                             Return</Button>,
-                        <Button key="completeFavor" type="default"
+                        <Button key="complete" type="default"
                             onClick={this.handleCompleteOk}
                         >
                             Complete</Button>,
@@ -288,6 +301,27 @@ class TasksLists extends Component {
                         layout="vertical"
                         name="completeRequest"
                     >
+                        <p>Please upload proof of completion:</p>
+                        <FormGroup>
+                            <Upload
+                                listType="picture"
+                                fileList={this.state.fileList}
+                                name="proof"
+                                id="proof"
+                                label="Proof"
+                                valuePropName="fileList"
+                                customRequest={this.dummyRequest}
+                                onChange={this.fileHandleChange}
+                                beforeUpload={this.beforeUpload}
+                                onRemove={this.onRemove}
+                                accept=".jpg,.png,.jpeg"
+                            >
+                                <Button type="button" icon={<UploadOutlined />}>Click to upload</Button>
+                                <br />
+                                <Text type="secondary">The file should be a image and less than 2MB.</Text>
+                            </Upload>
+                        </FormGroup>
+
 
                     </Form>
                 </Modal>
@@ -323,5 +357,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(
     mapStateToProps,
-    { acceptRequest, addOwe }
+    { acceptRequest, addOwe, deleteRequest }
 )(TasksLists);

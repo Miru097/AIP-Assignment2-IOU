@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import 'antd/dist/antd.css';
 import {
     Card, Col, Row, Image, Button, Pagination, Popover,
-    Modal, Form, Select, message, Typography, Space
+    Modal, Form, Select, message, Typography, Space, Input
 } from 'antd';
 import { getRequests, acceptRequest, updateRequest } from '../actions/requestActions';
 import { getUsers } from '../actions/userActions';
@@ -118,12 +118,18 @@ class RequestsList extends Component {
                     const acceptRequest = { creditor };
                     this.props.acceptRequest(this.state.acceptId, acceptRequest)
                 }, 100)
+                setTimeout(() => {
+                    {
+                        window.location.reload()
+                    }
+                }, 300)
             }
         }
     }
 
 
     render() {
+        const { Search } = Input;
         const { Text, Paragraph } = Typography;
         const { Option } = Select;
         const { Meta } = Card;
@@ -155,6 +161,14 @@ class RequestsList extends Component {
 
         return (
             <div className="container">
+                <Space direction="vertical">
+                    <Search
+                        placeholder="Input search text"
+                        onChange={e => console.log(e.target.value)}
+                        onSearch={value => console.log(value)}
+                    />
+                    <br />
+                </Space>
                 <Row gutter={[16, 16]}>
                     {
                         requests &&
@@ -233,6 +247,7 @@ class RequestsList extends Component {
                                 </Col>
                             ))}
                 </Row>
+
                 <Pagination
                     defaultCurrent={1}
                     defaultPageSize={this.state.numEachPage}
@@ -240,6 +255,7 @@ class RequestsList extends Component {
                     total={requests.length}
                     showTotal={total => `Total ${total} requests`}
                 />
+
                 <Modal
                     title="Update this request"
                     centered

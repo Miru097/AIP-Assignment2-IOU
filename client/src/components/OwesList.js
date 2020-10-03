@@ -30,24 +30,18 @@ class OwesList extends Component {
         file: null,
         msg: null
     };
-
     componentDidUpdate(prevProps) {
         const { error } = this.props;
         if (error !== prevProps.error) {
             // Check for register error
             if (error.id === 'DELETE_FAIL') {
                 this.setState({ msg: error.msg.msg });
-                console.log(this.state.msg)
             } else {
                 this.setState({ msg: null });
             }
         }
 
     }
-
-    // onDeleteClick = (id) => {
-    //     this.props.deleteOwe(id);
-    // }
     firstUpperCase = (str) => {
         return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase())
     }
