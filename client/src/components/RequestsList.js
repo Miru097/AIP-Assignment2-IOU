@@ -3,12 +3,13 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import 'antd/dist/antd.css';
 import {
-    Card, Col, Row, Image, Button, Pagination, Popover,
-    Modal, Form, Select, message, Typography, Space, Input
+    Card, Col, Row, Image, Button, Pagination, Popover, Dropdown,
+    Modal, Form, Select, message, Typography, Space, Menu,
 } from 'antd';
 import { getRequests, acceptRequest, updateRequest } from '../actions/requestActions';
 import { getUsers } from '../actions/userActions';
 import { clearErrors } from '../actions/errorActions';
+import { DownOutlined } from '@ant-design/icons';
 
 
 
@@ -25,7 +26,8 @@ class RequestsList extends Component {
         numEachPage: 12,
         modalAcceptVisible: false,
         modalUpdateVisible: false,
-        updateDisabled: true
+        updateDisabled: true,
+        searchKey: null
     }
     componentDidMount() {
         this.props.getRequests();
@@ -126,10 +128,15 @@ class RequestsList extends Component {
             }
         }
     }
-
+    onClick = ({ key }) => {
+        if (key === "All") {
+            this.setState({ searchKey: null })
+        } else {
+            this.setState({ searchKey: key })
+        }
+    };
 
     render() {
-        const { Search } = Input;
         const { Text, Paragraph } = Typography;
         const { Option } = Select;
         const { Meta } = Card;
@@ -156,17 +163,28 @@ class RequestsList extends Component {
                 }
             }
         }
-
-
+        if (this.state.searchKey !== null) { requests = requests.filter(requests => requests.favor.includes(this.state.searchKey)) }
+        const menu = (
+            <Menu onClick={this.onClick}>
+                <Menu.Item key="All">All</Menu.Item>
+                <Menu.Item key="Coffee">Coffee</Menu.Item>
+                <Menu.Item key="Chocolate">Chocolate</Menu.Item>
+                <Menu.Item key="Mint">Mint</Menu.Item>
+                <Menu.Item key="Pizza">Pizza</Menu.Item>
+                <Menu.Item key="Cupcake">Cupcake</Menu.Item>
+            </Menu >
+        );
 
         return (
             <div className="container">
                 <Space direction="vertical">
-                    <Search
-                        placeholder="Input search text"
-                        onChange={e => console.log(e.target.value)}
-                        onSearch={value => console.log(value)}
-                    />
+                    <Dropdown overlay={menu}>
+                        <a className="ant-dropdown-link"
+                            onClick={e => e.preventDefault()}
+                        >
+                            Search request by favor <DownOutlined />
+                        </a>
+                    </Dropdown>
                     <br />
                 </Space>
                 <Row gutter={[16, 16]}>
@@ -321,5 +339,6 @@ const mapStateToProps = (state) => ({
     users: state.user,
     user: state.auth.user,
     auth: state.auth,
+    requestContent: state.request.requests
 });
 export default connect(mapStateToProps, { getRequests, getUsers, clearErrors, acceptRequest, updateRequest })(RequestsList);
