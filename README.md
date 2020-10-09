@@ -1,4 +1,6 @@
 # AIP-Assignment2-IOU
+###Student Info
+Group 15
 
 ### How to start
 
