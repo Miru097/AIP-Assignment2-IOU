@@ -6,18 +6,18 @@ import {
     Card, Col, Row, Image, Button, Pagination, Popover, Dropdown,
     Modal, Form, Select, message, Typography, Space, Menu,
 } from 'antd';
-import { getRequests, acceptRequest, updateRequest } from '../actions/requestActions';
+import { getRequests, acceptRequest, updateRequest, deleteRequest } from '../actions/requestActions';
 import { getUsers } from '../actions/userActions';
 import { clearErrors } from '../actions/errorActions';
 import { DownOutlined } from '@ant-design/icons';
-
-
 
 class RequestsList extends Component {
     static propTypes = {
         isAuthenticated: PropTypes.bool,
         clearErrors: PropTypes.func.isRequired,
-        acceptRequest: PropTypes.func.isRequired
+        acceptRequest: PropTypes.func.isRequired,
+        updateRequest: PropTypes.func.isRequired,
+        deleteRequest: PropTypes.func.isRequired
     };
 
     state = {
@@ -26,8 +26,10 @@ class RequestsList extends Component {
         numEachPage: 12,
         modalAcceptVisible: false,
         modalUpdateVisible: false,
+        modalDeleteVisible: false,
         updateDisabled: true,
-        searchKey: null
+        searchKey: null,
+        deleteId: null,
     }
     componentDidMount() {
         this.props.getRequests();
@@ -87,7 +89,62 @@ class RequestsList extends Component {
             }, 300);
         }
     }
+    showDeleteModal = (_id, favor, debtor) => {
+        this.props.clearErrors();
+        this.setState({
+            modalDeleteVisible: true,
+            deleteId: _id,
+            deleteFavor: null,
+            deleteDebtor: null,
+            deleteKey: null,
+            nowFavor: favor,
+            nowDebtor: debtor,
+        });
+    }
+    handleDeleteCancel = e => {
+        this.setState({
+            modalDeleteVisible: false,
+            deleteId: null,
+            favor: this.state.nowFavor,
+            debtor: this.state.nowDebtor
+        });
+    };
+    deleteFavor = (value, key) => {
+        this.setState({
+            deleteFavor: value,
+            deleteDebtor: this.props.user._id,
+            deleteKey: key.key
+        })
 
+    }
+    handleDeleteOk = () => {
+        if (this.state.deleteFavor === null || this.state.deleteDebtor === null) {
+            message.error({
+                content: 'Please enter all fields'
+            });
+            return
+        } else {
+            this.state.nowFavor.splice(this.state.deleteKey, 1)
+            this.state.nowDebtor.splice(this.state.deleteKey, 1)
+            this.setState({
+                favor: this.state.nowFavor,
+                debtor: this.state.nowDebtor,
+                modalDeleteVisible: false,
+            })
+            setTimeout(() => {
+                if (this.state.favor.length > 0) {
+                    const { favor, debtor } = this.state;
+                    const updateRequest = { favor, debtor };
+                    this.props.updateRequest(this.state.deleteId, updateRequest)
+                } else {
+                    this.props.deleteRequest(this.state.deleteId);
+                }
+            }, 100)
+            setTimeout(() => {
+                window.location.reload()
+            }, 300);
+        }
+    }
     showAcceptModal = (_id, debtor) => {
         this.props.clearErrors();
         this.setState({
@@ -110,23 +167,22 @@ class RequestsList extends Component {
                     content: 'You cannot accept your request!'
                 });
                 return
-            } else {
-                this.setState({
-                    modalAcceptVisible: false,
-                    creditor: this.props.user._id
-                });
-                setTimeout(() => {
-                    const { creditor } = this.state;
-                    const acceptRequest = { creditor };
-                    this.props.acceptRequest(this.state.acceptId, acceptRequest)
-                }, 100)
-                setTimeout(() => {
-                    {
-                        window.location.reload()
-                    }
-                }, 300)
             }
         }
+        this.setState({
+            modalAcceptVisible: false,
+            creditor: this.props.user._id
+        });
+        setTimeout(() => {
+            const { creditor } = this.state;
+            const acceptRequest = { creditor };
+            this.props.acceptRequest(this.state.acceptId, acceptRequest)
+        }, 100)
+        setTimeout(() => {
+            {
+                window.location.reload()
+            }
+        }, 300)
     }
     onClick = ({ key }) => {
         if (key === "All") {
@@ -134,8 +190,7 @@ class RequestsList extends Component {
         } else {
             this.setState({ searchKey: key })
         }
-    };
-
+    }
     render() {
         const { Text, Paragraph } = Typography;
         const { Option } = Select;
@@ -158,7 +213,7 @@ class RequestsList extends Component {
                                 value2.push(this.firstUpperCase(name) + " will give you a " + requests[i].favor[j])
                                 requests[i][key2] = value2
                             }
-                        });
+                        })
                     }
                 }
             }
@@ -228,8 +283,19 @@ class RequestsList extends Component {
                                                     disabled={this.props.isAuthenticated && favor.length < 5 ? false : true}
                                                     onClick={this.showUpdateModal.bind(this, _id, favor, debtor)}
                                                 >
-                                                    Update
+                                                    Add
                                                 </Button>
+                                            </Popover>,
+                                            <Popover content="You can only delete favors you added." placement="bottom" trigger="hover">
+                                                <Button
+                                                    type="default"
+                                                    shape="round"
+                                                    key="delete"
+                                                    disabled={this.props.isAuthenticated && debtor.includes(this.props.user._id) ? false : true}
+                                                    onClick={this.showDeleteModal.bind(this, _id, favor, debtor)}
+                                                >
+                                                    Delete
+                                            </Button>
                                             </Popover>,
                                             <Button
                                                 type="default"
@@ -246,16 +312,6 @@ class RequestsList extends Component {
                                             title={this.firstUpperCase(description)}
                                         //description={"This is the description" + favor}
                                         />
-                                        {/* {debtorName !== undefined ?
-                                            (<Space direction="vertical">
-                                                {favor[0] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[0])} will give you a {favor[0]}.</Text>}
-                                                {favor[1] !== undefined ? (<Paragraph ellipsis={{ rows: 1, expandable: true, symbol: 'And more...' }}>
-                                                    {favor[1] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[1])} will give you a {favor[1]}.<br /></Text>}
-                                                    {favor[2] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[2])} will give you a {favor[2]}.<br /></Text>}
-                                                    {favor[3] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[3])} will give you a {favor[3]}.<br /></Text>}
-                                                    {favor[4] === undefined ? null : <Text type="default">{this.firstUpperCase(debtorName[4])} will give you a {favor[4]}.<br /></Text>}
-                                                </Paragraph>) : null}
-                                            </Space>) : null} */}
                                         <Paragraph ellipsis={{ rows: 3, expandable: true, symbol: 'And more...' }}>
                                             <Space direction="vertical">
                                                 {content}
@@ -289,7 +345,7 @@ class RequestsList extends Component {
                         <Button key="updateFavor" type="default"
                             onClick={this.handleUpdateOk}
                         >
-                            Update</Button>,
+                            Add</Button>,
                     ]}
                 >
                     <Form
@@ -310,6 +366,50 @@ class RequestsList extends Component {
                                 <Option value="Cupcake">Cupcake</Option>
                             </Select>
                             <Text type="secondary">There are up to five favors for one request.</Text>
+                        </Form.Item>
+                    </Form>
+                </Modal>
+                <Modal
+                    title="Update this request"
+                    centered
+                    visible={this.state.modalDeleteVisible}
+                    onOk={this.handleDeleteOk}
+                    onCancel={this.handleDeleteCancel}
+                    destroyOnClose
+                    footer={[
+                        <Button key="back"
+                            onClick={this.handleDeleteCancel}
+                        >
+                            Return</Button>,
+                        <Button key="deleteFavor" type="default"
+                            onClick={this.handleDeleteOk}
+                        >
+                            Delete</Button>
+                    ]}
+                >
+                    <Form
+                        layout="vertical"
+                        name="deleteRequest"
+                    >
+
+                        <Form.Item label="Which favor do you want to delete:">
+                            {requests.filter(requests => requests._id == this.state.deleteId)
+                                .map(({ favor, _id, debtor }) => (
+                                    <Select
+                                        placeholder="Select"
+                                        onChange={this.deleteFavor}
+                                        name="favorSelect"
+                                        key={_id}
+                                    //allowClear
+                                    >
+                                        {debtor[0] === this.props.user._id && favor[0] ? <Option value={favor[0]} key="0">{favor[0]}</Option> : null}
+                                        {debtor[1] === this.props.user._id && favor[1] ? <Option value={favor[1]} key="1">{favor[1]}</Option> : null}
+                                        {debtor[2] === this.props.user._id && favor[2] ? <Option value={favor[2]} key="2">{favor[2]}</Option> : null}
+                                        {debtor[3] === this.props.user._id && favor[3] ? <Option value={favor[3]} key="3">{favor[3]}</Option> : null}
+                                        {debtor[4] === this.props.user._id && favor[4] ? <Option value={favor[4]} key="4">{favor[4]}</Option> : null}
+                                    </Select>
+                                ))}
+                            <Text type="secondary">You can only delete the favors you added, if there is no faovr in the request, request will be deleted automatically</Text>
                         </Form.Item>
                     </Form>
                 </Modal>
@@ -341,4 +441,4 @@ const mapStateToProps = (state) => ({
     auth: state.auth,
     requestContent: state.request.requests
 });
-export default connect(mapStateToProps, { getRequests, getUsers, clearErrors, acceptRequest, updateRequest })(RequestsList);
+export default connect(mapStateToProps, { getRequests, getUsers, clearErrors, acceptRequest, updateRequest, deleteRequest })(RequestsList);
