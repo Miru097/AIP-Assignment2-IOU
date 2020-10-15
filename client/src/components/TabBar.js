@@ -56,7 +56,6 @@ class TabBar extends Component {
             </NavItem>
         );
         return (
-            //<Provider store={store}>
             <div>
                 <Container>
                     <Nav tabs>

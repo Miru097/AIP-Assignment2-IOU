@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import AppNavbar from './components/AppNavbar';
 import TabBar from './components/TabBar';
+import PartyDetection from './components/PartyDetection';
 
 import { Provider } from 'react-redux';
 import store from './store';
@@ -21,6 +22,7 @@ class App extends Component {
       <Provider store={store}>
         <div className='App'>
           <AppNavbar />
+          <PartyDetection />
           <TabBar />
         </div>
       </Provider>
