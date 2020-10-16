@@ -17,6 +17,7 @@ import classnames from 'classnames';
 import RequestModal from './RequestModal';
 import RequestsList from './RequestsList';
 import TasksLists from './TasksLists';
+import PartyDetection from './PartyDetection';
 
 
 class TabBar extends Component {
@@ -55,6 +56,16 @@ class TabBar extends Component {
                     </NavLink>
             </NavItem>
         );
+        const authPartylink = (
+            <NavItem >
+                <NavLink
+                    className={classnames({ active: this.state.activeTab === '5' })}
+                    onClick={() => { this.toggle('5'); }}
+                >
+                    Party Detection
+                    </NavLink>
+            </NavItem>
+        );
         return (
             <div>
                 <Container>
@@ -77,6 +88,7 @@ class TabBar extends Component {
                             </NavLink>
                         </NavItem>
                         {isAuthenticated ? authRequestlink : null}
+                        {isAuthenticated ? authPartylink : null}
                     </Nav>
                     <TabContent activeTab={this.state.activeTab} style={{ marginTop: '2rem' }}>
                         <TabPane tabId="1">
@@ -97,6 +109,9 @@ class TabBar extends Component {
                         </TabPane>
                         <TabPane tabId="4">
                             <TasksLists />
+                        </TabPane>
+                        <TabPane tabId="5">
+                            <PartyDetection />
                         </TabPane>
                     </TabContent>
                 </Container>
