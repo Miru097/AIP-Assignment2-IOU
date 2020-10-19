@@ -34,29 +34,29 @@ class PartyDetection extends Component {
                         j++
                     }
                 }
-
                 this.state.allPartyArray = this.unique(this.state.allPartyArray)
-
-                do {
-                    for (let j = 0; j < this.props.owe.owes.length; j++) {
-                        if (this.props.owe.owes[j].debtor === this.state.allPartyArray[0][this.state.allPartyArray[0].length - 1] &&
-                            this.props.owe.owes[j].favor === this.state.favorList[l]) {
-                            if (this.props.owe.owes[j].creditor == this.props.user._id) {
-                                this.state.detectionPartyArray[k] = this.state.allPartyArray[0]
-                                k++
-                            } else if (!this.state.allPartyArray[0].includes(this.props.owe.owes[j].creditor))// Cannot exist in other parts of the array
-                            {
-                                //Put a new extended array at the end
-                                this.state.allPartyArray.push([...this.state.allPartyArray[0], this.props.owe.owes[j].creditor])
+                if (this.state.allPartyArray.length > 0) {
+                    do {
+                        for (let j = 0; j < this.props.owe.owes.length; j++) {
+                            if (this.props.owe.owes[j].debtor === this.state.allPartyArray[0][this.state.allPartyArray[0].length - 1] &&
+                                this.props.owe.owes[j].favor === this.state.favorList[l]) {
+                                if (this.props.owe.owes[j].creditor == this.props.user._id) {
+                                    this.state.detectionPartyArray[k] = this.state.allPartyArray[0]
+                                    k++
+                                } else if (!this.state.allPartyArray[0].includes(this.props.owe.owes[j].creditor))// Cannot exist in other parts of the array
+                                {
+                                    //Put a new extended array at the end
+                                    this.state.allPartyArray.push([...this.state.allPartyArray[0], this.props.owe.owes[j].creditor])
+                                }
                             }
                         }
+                        //delete this.state.allPartyArray[0]
+                        this.state.allPartyArray.shift()
                     }
-                    //delete this.state.allPartyArray[0]
-                    this.state.allPartyArray.shift()
+                    while (this.state.allPartyArray.length > 0)
                 }
-                while (this.state.allPartyArray.length > 0)
+                this.state.detectionPartyArray = this.unique(this.state.detectionPartyArray)
             }
-            this.state.detectionPartyArray = this.unique(this.state.detectionPartyArray)
         }
         if (this.state.detectionPartyArray.length > 0) {
             for (let l = 0; l < this.state.detectionPartyArray.length; l++) {

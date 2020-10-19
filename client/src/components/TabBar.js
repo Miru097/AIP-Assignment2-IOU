@@ -39,13 +39,13 @@ class TabBar extends Component {
         const authOwelink = (
             <NavItem >
                 <NavLink
-                    className={classnames({ active: this.state.activeTab === '2' })}
-                    onClick={() => { this.toggle('2'); }}
+                    className={classnames({ active: this.state.activeTab === '3' })}
+                    onClick={() => { this.toggle('3'); }}
                 >
                     OWE
                     </NavLink>
             </NavItem>
-        );
+        )
         const authRequestlink = (
             <NavItem >
                 <NavLink
@@ -55,7 +55,7 @@ class TabBar extends Component {
                     Task
                     </NavLink>
             </NavItem>
-        );
+        )
         const authPartylink = (
             <NavItem >
                 <NavLink
@@ -65,7 +65,27 @@ class TabBar extends Component {
                     Party Detection
                     </NavLink>
             </NavItem>
-        );
+        )
+        const authOweTab = (
+            <TabPane tabId="3">
+                <Row>
+                    <Col sm="12">
+                        <OweModal />
+                        <OwesList />
+                    </Col>
+                </Row>
+            </TabPane>
+        )
+        const authRequestTab = (
+            <TabPane tabId="4">
+                <TasksLists />
+            </TabPane>
+        )
+        const authPartyTab = (
+            <TabPane tabId="5">
+                <PartyDetection />
+            </TabPane>
+        )
         return (
             <div>
                 <Container>
@@ -78,15 +98,16 @@ class TabBar extends Component {
                                 Request
                             </NavLink>
                         </NavItem>
-                        {isAuthenticated ? authOwelink : null}
+
                         <NavItem>
                             <NavLink
-                                className={classnames({ active: this.state.activeTab === '3' })}
-                                onClick={() => { this.toggle('3'); }}
+                                className={classnames({ active: this.state.activeTab === '2' })}
+                                onClick={() => { this.toggle('2'); }}
                             >
                                 Ranking
                             </NavLink>
                         </NavItem>
+                        {isAuthenticated ? authOwelink : null}
                         {isAuthenticated ? authRequestlink : null}
                         {isAuthenticated ? authPartylink : null}
                     </Nav>
@@ -98,21 +119,12 @@ class TabBar extends Component {
                             </Row>
                         </TabPane>
                         <TabPane tabId="2">
-                            <Row>
-                                <Col sm="12">
-                                    <OweModal />
-                                    <OwesList />
-                                </Col>
-                            </Row>
                         </TabPane>
-                        <TabPane tabId="3">
-                        </TabPane>
-                        <TabPane tabId="4">
-                            <TasksLists />
-                        </TabPane>
-                        <TabPane tabId="5">
-                            <PartyDetection />
-                        </TabPane>
+                        {isAuthenticated ? authOweTab : null}
+                        {isAuthenticated ? authRequestTab : null}
+                        {isAuthenticated ? authPartyTab : null}
+
+
                     </TabContent>
                 </Container>
             </div>
