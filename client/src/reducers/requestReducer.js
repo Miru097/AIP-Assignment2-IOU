@@ -1,7 +1,11 @@
-import { GET_REQUESTS, ADD_REQUEST, DELETE_REQUEST, REQUESTS_LOADING, ADD_REQUEST_FAIL, ACCEPT_REQUEST, UPDATE_REQUEST } from '../actions/types';
+import {
+    GET_REQUESTS, ADD_REQUEST, DELETE_REQUEST, REQUESTS_LOADING, CHECK_FAIL,
+    ADD_REQUEST_FAIL, ACCEPT_REQUEST, UPDATE_REQUEST, CHECK_REQUEST, CLEAR_CHECK_REQUEST
+} from '../actions/types';
 const initialState = {
     requests: [],
-    loading: false
+    loading: false,
+    checkRequest: []
 }
 
 export default function (state = initialState, action) {
@@ -41,6 +45,20 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 requests: [...state.requests],
+            }
+        case CHECK_REQUEST:
+            return {
+                ...state,
+                checkRequest: action.payload,
+            }
+        case CLEAR_CHECK_REQUEST:
+            return {
+                ...state,
+                checkRequest: null,
+            }
+        case CHECK_FAIL:
+            return {
+                ...state
             }
         default:
             return state;

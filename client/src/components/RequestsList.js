@@ -6,7 +6,7 @@ import {
     Card, Col, Row, Image, Button, Pagination, Popover, Dropdown,
     Modal, Form, Select, message, Typography, Space, Menu,
 } from 'antd';
-import { getRequests, acceptRequest, updateRequest, deleteRequest } from '../actions/requestActions';
+import { getRequests, acceptRequest, updateRequest, deleteRequest, checkRequest, clearCheckRequest } from '../actions/requestActions';
 import { getUsers } from '../actions/userActions';
 import { clearErrors } from '../actions/errorActions';
 import { DownOutlined } from '@ant-design/icons';
@@ -17,7 +17,8 @@ class RequestsList extends Component {
         clearErrors: PropTypes.func.isRequired,
         acceptRequest: PropTypes.func.isRequired,
         updateRequest: PropTypes.func.isRequired,
-        deleteRequest: PropTypes.func.isRequired
+        deleteRequest: PropTypes.func.isRequired,
+        checkRequest: PropTypes.func.isRequired
     };
 
     state = {
@@ -30,9 +31,21 @@ class RequestsList extends Component {
         updateDisabled: true,
         searchKey: null,
         deleteId: null,
+        msg: null
     }
     componentDidMount() {
         this.props.getRequests();
+    }
+    componentDidUpdate(prevProps) {
+        const { error } = this.props;
+        if (error !== prevProps.error) {
+            if (error.id === 'CHECK_FAIL') {
+                this.setState({ msg: error.msg.msg });
+            } else {
+                this.setState({ msg: null });
+            }
+        }
+
     }
     firstUpperCase = (str) => {
         return str.toLowerCase().replace(/( |^)[a-z]/g, (L) => L.toUpperCase())
@@ -45,6 +58,7 @@ class RequestsList extends Component {
     }
     showUpdateModal = (_id, favor, debtor) => {
         this.props.clearErrors();
+        this.props.clearCheckRequest();
         this.setState({
             modalUpdateVisible: true,
             updateId: _id,
@@ -52,6 +66,7 @@ class RequestsList extends Component {
             updateDebtor: null,
             nowFavor: favor,
             nowDebtor: debtor,
+            msg: null
         });
     }
     handleUpdateCancel = e => {
@@ -74,23 +89,53 @@ class RequestsList extends Component {
             });
             return
         } else {
+            this.props.checkRequest(this.state.updateId)
             this.setState({
-                favor: [...this.state.nowFavor, this.state.updateFavor],
-                debtor: [...this.state.nowDebtor, this.state.updateDebtor],
                 modalUpdateVisible: false,
-            })
+            });
             setTimeout(() => {
-                const { favor, debtor } = this.state;
-                const updateRequest = { favor, debtor };
-                this.props.updateRequest(this.state.updateId, updateRequest)
-            }, 100)
-            setTimeout(() => {
-                window.location.reload()
-            }, 300);
+                if (this.state.msg !== null || this.props.checkedRequest === null) {
+                    message.error({
+                        content: 'This request or authentication has content changed! This page will refresh in 3 seconds!'
+                    }, 3);
+                    setTimeout(() => {
+                        {
+                            window.location.reload()
+                        }
+                    }, 3000)
+                } else {
+                    if (JSON.stringify(this.state.nowFavor) === JSON.stringify(this.props.checkedRequest.favor)
+                        && JSON.stringify(this.state.nowDebtor) === JSON.stringify(this.props.checkedRequest.debtor)
+                        && this.props.checkedRequest.creditor === null) {
+                        this.setState({
+                            favor: [...this.state.nowFavor, this.state.updateFavor],
+                            debtor: [...this.state.nowDebtor, this.state.updateDebtor],
+                        })
+                        setTimeout(() => {
+                            const { favor, debtor } = this.state;
+                            const updateRequest = { favor, debtor };
+                            this.props.updateRequest(this.state.updateId, updateRequest)
+                        }, 100)
+                        setTimeout(() => {
+                            window.location.reload()
+                        }, 300);
+                    } else {
+                        message.error({
+                            content: 'This request has content changed! Please refresh to check the latest content！This page will refresh in 3 seconds!'
+                        }, 3);
+                        setTimeout(() => {
+                            {
+                                window.location.reload()
+                            }
+                        }, 3000)
+                    }
+                }
+            }, 500)
         }
     }
     showDeleteModal = (_id, favor, debtor) => {
         this.props.clearErrors();
+        this.props.clearCheckRequest();
         this.setState({
             modalDeleteVisible: true,
             deleteId: _id,
@@ -99,6 +144,7 @@ class RequestsList extends Component {
             deleteKey: null,
             nowFavor: favor,
             nowDebtor: debtor,
+            msg: null
         });
     }
     handleDeleteCancel = e => {
@@ -124,34 +170,67 @@ class RequestsList extends Component {
             });
             return
         } else {
-            this.state.nowFavor.splice(this.state.deleteKey, 1)
-            this.state.nowDebtor.splice(this.state.deleteKey, 1)
+            this.props.checkRequest(this.state.deleteId)
             this.setState({
-                favor: this.state.nowFavor,
-                debtor: this.state.nowDebtor,
-                modalDeleteVisible: false,
-            })
+                modalUpdateVisible: false,
+            });
             setTimeout(() => {
-                if (this.state.favor.length > 0) {
-                    const { favor, debtor } = this.state;
-                    const updateRequest = { favor, debtor };
-                    this.props.updateRequest(this.state.deleteId, updateRequest)
+                if (this.state.msg !== null || this.props.checkedRequest === null) {
+                    message.error({
+                        content: 'This request or authentication has content changed! This page will refresh in 3 seconds!'
+                    }, 3);
+                    setTimeout(() => {
+                        {
+                            window.location.reload()
+                        }
+                    }, 3000)
                 } else {
-                    this.props.deleteRequest(this.state.deleteId);
+                    if (JSON.stringify(this.state.nowFavor) === JSON.stringify(this.props.checkedRequest.favor)
+                        && JSON.stringify(this.state.nowDebtor) === JSON.stringify(this.props.checkedRequest.debtor)
+                        && this.props.checkedRequest.creditor === null) {
+                        this.state.nowFavor.splice(this.state.deleteKey, 1)
+                        this.state.nowDebtor.splice(this.state.deleteKey, 1)
+                        this.setState({
+                            favor: this.state.nowFavor,
+                            debtor: this.state.nowDebtor,
+                        })
+                        setTimeout(() => {
+                            if (this.state.favor.length > 0) {
+                                const { favor, debtor } = this.state;
+                                const updateRequest = { favor, debtor };
+                                this.props.updateRequest(this.state.deleteId, updateRequest)
+                            } else {
+                                this.props.deleteRequest(this.state.deleteId);
+                            }
+                        }, 100)
+                        setTimeout(() => {
+                            window.location.reload()
+                        }, 300);
+                    } else {
+                        message.error({
+                            content: 'This request has content changed! Please refresh to check the latest content！This page will refresh in 3 seconds!'
+                        }, 3);
+                        setTimeout(() => {
+                            {
+                                window.location.reload()
+                            }
+                        }, 3000)
+                    }
                 }
-            }, 100)
-            setTimeout(() => {
-                window.location.reload()
-            }, 300);
+            }, 500)
         }
     }
-    showAcceptModal = (_id, debtor) => {
+    showAcceptModal = (_id, favor, debtor) => {
         this.props.clearErrors();
+        this.props.clearCheckRequest();
         this.setState({
             modalAcceptVisible: true,
             creditor: null,
             acceptId: _id,
-            acceptDebtor: debtor
+            acceptDebtor: debtor,
+            nowFavor: favor,
+            nowDebtor: debtor,
+            msg: null
         });
 
     }
@@ -173,16 +252,46 @@ class RequestsList extends Component {
             modalAcceptVisible: false,
             creditor: this.props.user._id
         });
+        this.props.checkRequest(this.state.acceptId)
+        this.setState({
+            modalUpdateVisible: false,
+        });
         setTimeout(() => {
-            const { creditor } = this.state;
-            const acceptRequest = { creditor };
-            this.props.acceptRequest(this.state.acceptId, acceptRequest)
-        }, 100)
-        setTimeout(() => {
-            {
-                window.location.reload()
+            if (this.state.msg !== null || this.props.checkedRequest === null) {
+                message.error({
+                    content: 'This request or authentication  has content changed! This page will refresh in 3 seconds!'
+                }, 3);
+                setTimeout(() => {
+                    {
+                        window.location.reload()
+                    }
+                }, 3000)
+            } else {
+                if (JSON.stringify(this.state.nowFavor) === JSON.stringify(this.props.checkedRequest.favor)
+                    && JSON.stringify(this.state.nowDebtor) === JSON.stringify(this.props.checkedRequest.debtor)
+                    && this.props.checkedRequest.creditor === null) {
+                    setTimeout(() => {
+                        const { creditor } = this.state;
+                        const acceptRequest = { creditor };
+                        this.props.acceptRequest(this.state.acceptId, acceptRequest)
+                    }, 100)
+                    setTimeout(() => {
+                        {
+                            window.location.reload()
+                        }
+                    }, 300)
+                } else {
+                    message.error({
+                        content: 'This request has content changed! Please refresh to check the latest content！This page will refresh in 3 seconds!'
+                    }, 3);
+                    setTimeout(() => {
+                        {
+                            window.location.reload()
+                        }
+                    }, 3000)
+                }
             }
-        }, 300)
+        }, 500)
     }
     onClick = ({ key }) => {
         if (key === "All") {
@@ -302,7 +411,7 @@ class RequestsList extends Component {
                                                 shape="round"
                                                 key="accept"
                                                 disabled={(this.props.isAuthenticated) ? false : true}
-                                                onClick={this.showAcceptModal.bind(this, _id, debtor)}
+                                                onClick={this.showAcceptModal.bind(this, _id, favor, debtor)}
                                             >
                                                 Accept
                                             </Button>,
@@ -409,7 +518,7 @@ class RequestsList extends Component {
                                         {debtor[4] === this.props.user._id && favor[4] ? <Option value={favor[4]} key="4">{favor[4]}</Option> : null}
                                     </Select>
                                 ))}
-                            <Text type="secondary">You can only delete the favors you added, if there is no faovr in the request, request will be deleted automatically</Text>
+                            <Text type="secondary">You can only delete the favors you added, if there is no favor in the request, request will be deleted automatically</Text>
                         </Form.Item>
                     </Form>
                 </Modal>
@@ -439,6 +548,12 @@ const mapStateToProps = (state) => ({
     users: state.user,
     user: state.auth.user,
     auth: state.auth,
-    requestContent: state.request.requests
+    error: state.error,
+    requestContent: state.request.requests,
+    checkedRequest: state.request.checkRequest
 });
-export default connect(mapStateToProps, { getRequests, getUsers, clearErrors, acceptRequest, updateRequest, deleteRequest })(RequestsList);
+export default connect(mapStateToProps,
+    {
+        getRequests, getUsers, clearErrors, acceptRequest,
+        updateRequest, deleteRequest, checkRequest, clearCheckRequest
+    })(RequestsList);

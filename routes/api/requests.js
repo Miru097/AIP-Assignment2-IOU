@@ -8,6 +8,11 @@ router.get('/', (req, res) => {
         .sort({ date: 1 })
         .then(request => res.json(request));
 });
+router.get('/:id', auth, (req, res) => {
+    Request.findById(req.params.id)
+        .then(request => res.json(request))
+        .catch(err => res.status(404).json({ msg: 'It had be deleted!' }));
+});
 
 router.post('/', auth, (req, res) => {
     const { favor, debtor, creditor, proof, description } = req.body;

@@ -38,7 +38,6 @@ class RequestModal extends Component {
     };
     handleOk = (e) => {
         e.preventDefault();
-
         if (this.state.description === null || this.state.favor.length === 0) {
             message.error({
                 content: 'Please enter all fields!'
