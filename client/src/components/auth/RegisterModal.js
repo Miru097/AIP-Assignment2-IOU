@@ -9,7 +9,8 @@ import {
     Label,
     Input,
     NavLink,
-    Alert
+    Alert,
+    FormText
 } from 'reactstrap';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -79,7 +80,7 @@ class RegisterModal extends Component {
             } else {
                 window.location.reload()
             }
-        }, 300);
+        }, 500);
     };
 
     render() {
@@ -106,6 +107,9 @@ class RegisterModal extends Component {
                                     className='mb-3'
                                     onChange={this.onChange}
                                 />
+                                <FormText color="muted">
+                                    The username should be 4 to 16 digits, and letters, numbers, '_' and '-' can be used.
+                                </FormText>
                                 <Label for="email">Email</Label>
                                 <Input type="text"
                                     name="email"
@@ -122,6 +126,9 @@ class RegisterModal extends Component {
                                     placeholder="Password"
                                     onChange={this.onChange}
                                 />
+                                <FormText color="muted">
+                                    The password should include letters, numbers, no spaces, more than 8 digits, and less than 20 digits.
+                                </FormText>
                                 <Button
                                     color="dark"
                                     style={{ marginTop: '2rem' }}

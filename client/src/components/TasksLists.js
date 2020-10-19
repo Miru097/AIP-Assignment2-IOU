@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { UploadOutlined } from '@ant-design/icons';
 import {
     Card, Col, Row, Image, Button, Pagination,
-    Modal, Form, Select, message, Typography, Space, Upload
+    Modal, Form, message, Typography, Space, Upload
 } from 'antd';
 
 import { acceptRequest, deleteRequest } from '../actions/requestActions';

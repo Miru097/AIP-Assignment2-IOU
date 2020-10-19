@@ -75,7 +75,7 @@ class LoginModal extends Component {
             } else {
                 window.location.reload()
             }
-        }, 300);
+        }, 500);
     };
 
     render() {

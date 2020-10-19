@@ -38,12 +38,19 @@ class RequestModal extends Component {
     };
     handleOk = (e) => {
         e.preventDefault();
+
         if (this.state.description === null || this.state.favor.length === 0) {
             message.error({
-                content: 'Please enter all fields'
+                content: 'Please enter all fields!'
             });
             return
-        } else {
+        } else if (this.state.description !== null && this.state.description.length > 200) {
+            message.error({
+                content: 'Description cannot be more than 200 characters!'
+            });
+            return
+        }
+        else {
             const { description, favor,
                 debtor, creditor, proof
             } = this.state;
@@ -107,10 +114,8 @@ class RequestModal extends Component {
     fileHandleChange = (e) => {
         let fileList = [...e.fileList];
         fileList = fileList.slice(-1);
-        // 2. Read from response and show file link
         fileList = fileList.map(file => {
             if (file.response) {
-                // Component will show file.url as link
                 file.url = file.response.url;
             }
             return file;
@@ -158,6 +163,7 @@ class RequestModal extends Component {
                                 <Input placeholder="Your request description"
                                     name="description"
                                     onChange={this.DescriptionChange} />
+                                <Text type="secondary">The description cannot be more than 200 characters.</Text>
                             </Form.Item>
                             <Form.Item label="Favor:">
                                 <Select

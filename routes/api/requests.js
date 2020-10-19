@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
         .then(request => res.json(request));
 });
 
-router.post('/', (req, res) => {
+router.post('/', auth, (req, res) => {
     const { favor, debtor, creditor, proof, description } = req.body;
     const newRequest = new Request({
         favor: req.body.favor,
@@ -18,13 +18,6 @@ router.post('/', (req, res) => {
         proof: req.body.proof,
         description: req.body.description
     });
-
-    // if (!favor || !debtor || !creditor) {
-    //     return res.status(400).json({ msg: 'Please enter all fields' });
-    // }
-    // if (!checked && !proof) {
-    //     return res.status(400).json({ msg: 'Please enter all fields' });
-    // }
     newRequest.save().then(request => res.json(request));
 });
 
@@ -34,7 +27,7 @@ router.delete('/:id', auth, (req, res) => {
         .catch(err => res.status(404).json({ msg: false }));
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', auth, (req, res) => {
     Request.findByIdAndUpdate(req.params.id, req.body)
         .then(request => res.json(request))
         .catch(err => res.status(404).json({ msg: false }));

@@ -79,9 +79,7 @@ class OwesList extends Component {
                         }
                     }, 3000)
                 }
-
-            }, 300)
-
+            }, 500)
         }
 
     };

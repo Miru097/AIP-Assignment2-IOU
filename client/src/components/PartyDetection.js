@@ -28,8 +28,8 @@ class PartyDetection extends Component {
             if (this.props.owe.owes.length > 0) {
                 let j = 0
                 for (let i = 0; i < this.props.owe.owes.length; i++) {
-                    if (this.props.owe.owes[i].debtor == this.props.user._id &&
-                        this.props.owe.owes[i].favor == this.state.favorList[l]) {
+                    if (this.props.owe.owes[i].debtor === this.props.user._id &&
+                        this.props.owe.owes[i].favor === this.state.favorList[l]) {
                         this.state.allPartyArray[j] = [this.state.favorList[l], this.props.user._id, this.props.owe.owes[i].creditor]
                         j++
                     }
@@ -39,8 +39,8 @@ class PartyDetection extends Component {
 
                 do {
                     for (let j = 0; j < this.props.owe.owes.length; j++) {
-                        if (this.props.owe.owes[j].debtor == this.state.allPartyArray[0][this.state.allPartyArray[0].length - 1] &&
-                            this.props.owe.owes[j].favor == this.state.favorList[l]) {
+                        if (this.props.owe.owes[j].debtor === this.state.allPartyArray[0][this.state.allPartyArray[0].length - 1] &&
+                            this.props.owe.owes[j].favor === this.state.favorList[l]) {
                             if (this.props.owe.owes[j].creditor == this.props.user._id) {
                                 this.state.detectionPartyArray[k] = this.state.allPartyArray[0]
                                 k++
@@ -75,6 +75,11 @@ class PartyDetection extends Component {
             this.setState({
                 content: this.state.content
             })
+        } else {
+            this.state.content[0] = "There is no party to hold, click the button to recheck."
+            this.setState({
+                content: this.state.content
+            })
         }
     }
     unique = (array) => {
@@ -84,8 +89,8 @@ class PartyDetection extends Component {
             return obj.hasOwnProperty(newItem) ? false : obj[newItem] = true
         })
     }
-
     render() {
+        const { Text } = Typography
         return (
             <div className="container">
                 <List
@@ -102,14 +107,10 @@ class PartyDetection extends Component {
                     dataSource={this.state.content}
                     renderItem={item => (
                         <List.Item>
-                            {this.state.content.length > 0 ?
-                                <Typography.Text>{item}</Typography.Text>
-                                : <Typography.Text>There is no party to hold, click the button to recheck.</Typography.Text>}
+                            <Typography.Text>{item}</Typography.Text>
                         </List.Item>
                     )}
                 />
-
-
             </div>
         )
     }

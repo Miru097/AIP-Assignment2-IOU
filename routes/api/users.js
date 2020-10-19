@@ -8,13 +8,27 @@ const User = require('../../models/User');
 
 router.post('/', (req, res) => {
     const { name, email, password } = req.body;
-
+    //https://www.jb51.net/article/115170.htm
+    const nameRegexp = /^[a-zA-Z0-9_-]{4,20}$/;
+    //http://www.jsdaxue.com/archives/182.html
+    const emailRegexp = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
+    //https://blog.csdn.net/Z_ammo/article/details/103420485
+    const passwordRegexp = /^(?=\S*[a-z])(?=\S*\d)\S{8,20}$/;
     if (!name || !email || !password) {
-        return res.status(400).json({ msg: 'Please enter all fields' });
+        return res.status(400).json({ msg: 'Please enter all fields!' });
+    }
+    if (!nameRegexp.test(name)) {
+        return res.status(400).json({ msg: 'Please enter the username as required!' });
+    }
+    if (!emailRegexp.test(email)) {
+        return res.status(400).json({ msg: 'Please check your email!' });
+    }
+    if (!passwordRegexp.test(password)) {
+        return res.status(400).json({ msg: 'Please enter the password as required!' });
     }
     User.findOne({ email })
         .then(user => {
-            if (user) return res.status(400).json({ msg: 'User already exists' });
+            if (user) return res.status(400).json({ msg: 'User email already exists' });
             const newUser = new User({
                 name,
                 email,
