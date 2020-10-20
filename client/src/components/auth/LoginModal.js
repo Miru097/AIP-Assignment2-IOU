@@ -61,21 +61,19 @@ class LoginModal extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
-    onSubmit = (e) => {
+    onSubmit = async (e) => {
         e.preventDefault();
         const { email, password } = this.state;
         const user = {
             email,
             password
         }
-        this.props.login(user);
-        setTimeout(() => {
-            if (this.state.msg !== null) {
-                return
-            } else {
-                window.location.reload()
-            }
-        }, 500);
+        try {
+            await this.props.login(user);
+            window.location.reload()
+        } catch (err) {
+            return
+        }
     };
 
     render() {

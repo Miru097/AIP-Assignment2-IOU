@@ -55,31 +55,29 @@ class OwesList extends Component {
             msg: null
         });
     };
-    handleOk = e => {
+    handleOk = async (e) => {
         if (this.state.currentDebtor === this.props.user._id && this.state.imageUrl === null) {
             message.error({
                 content: 'Please enter all fields'
             });
             return
         } else {
-            this.props.deleteOwe(this.state.currentOweId);
-            this.setState({
-                visible: false,
-            });
-            setTimeout(() => {
-                if (this.state.msg !== null) {
-                    message.error({
-                        content: 'This owe is not exist! This page will refresh in 3 seconds!'
-                    }, 3);
-                    setTimeout(() => {
-                        {
-                            window.location.reload()
-                        }
-                    }, 3000)
-                }
-            }, 500)
+            try {
+                await this.props.deleteOwe(this.state.currentOweId);
+                this.setState({
+                    visible: false,
+                });
+            } catch (err) {
+                message.error({
+                    content: 'This owe is not exist! This page will refresh in 3 seconds!'
+                }, 3);
+                setTimeout(() => {
+                    {
+                        window.location.reload()
+                    }
+                }, 3000)
+            }
         }
-
     };
     handleCancel = e => {
         this.setState({

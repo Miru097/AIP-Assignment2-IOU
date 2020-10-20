@@ -18,20 +18,27 @@ export const getRequests = () => dispatch => {
         );
 };
 export const checkRequest = id => (dispatch, getState) => {
-    axios.get(`/api/requests/${id}`, tokenConfig(getState))
-        .then(res => dispatch({
-            type: CHECK_REQUEST,
-            payload: res.data
-        }))
-        .catch(
-            err => {
-                dispatch(
-                    returnErrors(err.response.data, err.response.status, 'CHECK_FAIL')
-                );
+    return new Promise((resolve, reject) => {
+        axios.get(`/api/requests/${id}`, tokenConfig(getState))
+            .then(res => {
                 dispatch({
-                    type: CHECK_FAIL,
+                    type: CHECK_REQUEST,
+                    payload: res.data
                 });
-            });
+                resolve(res)
+            }
+            )
+            .catch(
+                err => {
+                    dispatch(
+                        returnErrors(err.response.data, err.response.status, 'CHECK_FAIL')
+                    );
+                    dispatch({
+                        type: CHECK_FAIL,
+                    });
+                    reject(err)
+                });
+    })
 };
 
 export const clearCheckRequest = () => {
@@ -41,61 +48,89 @@ export const clearCheckRequest = () => {
 };
 
 export const addRequest = request => (dispatch, getState) => {
-    axios
-        .post('/api/requests', request, tokenConfig(getState))
-        .then(
-            res => {
-                dispatch({
-                    type: ADD_REQUEST,
-                    payload: res.data,
+    return new Promise((resolve, reject) => {
+        axios
+            .post('/api/requests', request, tokenConfig(getState))
+            .then(
+                res => {
+                    dispatch({
+                        type: ADD_REQUEST,
+                        payload: res.data,
+                    });
+                    resolve(res)
+                })
+            .catch(
+                err => {
+                    dispatch(
+                        returnErrors(err.response.data, err.response.status, 'ADD_REQUEST_FAIL')
+                    );
+                    dispatch({
+                        type: ADD_REQUEST_FAIL
+                    });
+                    reject(err)
                 });
-            })
-        .catch(
-            err => {
-                dispatch(
-                    returnErrors(err.response.data, err.response.status, 'ADD_REQUEST_FAIL')
-                );
-                dispatch({
-                    type: ADD_REQUEST_FAIL
-                });
-            });
+    })
 };
 
 
 export const deleteRequest = id => (dispatch, getState) => {
-    axios
-        .delete(`/api/requests/${id}`, tokenConfig(getState))
-        .then(res => dispatch({
-            type: DELETE_REQUEST,
-            payload: id
-        }))
-        .catch(
-            err => dispatch(returnErrors(err.response.data, err.response.status))
-        );
+    return new Promise((resolve, reject) => {
+        axios
+            .delete(`/api/requests/${id}`, tokenConfig(getState))
+            .then(res => {
+                dispatch({
+                    type: DELETE_REQUEST,
+                    payload: id
+                });
+                resolve(res)
+            })
+            .catch(
+                err => {
+                    dispatch(returnErrors(err.response.data, err.response.status));
+                    reject(err)
+                });
+    })
 };
 
 export const acceptRequest = (id, request) => (dispatch, getState) => {
-    axios
-        .put(`/api/requests/${id}`, request, tokenConfig(getState))
-        .then(res => dispatch({
-            type: ACCEPT_REQUEST,
-            payload: id
-        }))
-        .catch(
-            err => dispatch(returnErrors(err.response.data, err.response.status))
-        );
+    return new Promise((resolve, reject) => {
+        axios
+            .put(`/api/requests/${id}`, request, tokenConfig(getState))
+            .then(res => {
+                dispatch({
+                    type: ACCEPT_REQUEST,
+                    payload: id
+                });
+                resolve(res)
+            })
+            .catch(
+                err => {
+                    dispatch(returnErrors(err.response.data, err.response.status));
+                    reject(err)
+                }
+            );
+    })
 };
 
 export const updateRequest = (id, request) => (dispatch, getState) => {
-    axios
-        .put(`/api/requests/${id}`, request, tokenConfig(getState))
-        .then(res => dispatch({
-            type: UPDATE_REQUEST,
-            payload: id
-        }))
-        .catch(
-            err => dispatch(returnErrors(err.response.data, err.response.status))
-        );
+    return new Promise((resolve, reject) => {
+        axios
+            .put(`/api/requests/${id}`, request, tokenConfig(getState))
+            .then(res => {
+                dispatch({
+                    type: UPDATE_REQUEST,
+                    payload: id
+                });
+                resolve(res)
+            }
+            )
+            .catch(
+                err => {
+                    dispatch(returnErrors(err.response.data, err.response.status));
+                    reject(err)
+                }
+            );
+    })
 };
 
 

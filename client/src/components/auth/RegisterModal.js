@@ -63,7 +63,7 @@ class RegisterModal extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
-    onSubmit = (e) => {
+    onSubmit = async (e) => {
         e.preventDefault();
         const { name, email, password } = this.state;
         //Create user object
@@ -73,14 +73,12 @@ class RegisterModal extends Component {
             password
         };
         //Attempt to register
-        this.props.register(newUser);
-        setTimeout(() => {
-            if (this.state.msg !== null) {
-                return
-            } else {
-                window.location.reload()
-            }
-        }, 500);
+        try {
+            await this.props.register(newUser);
+            window.location.reload()
+        } catch (err) {
+            return
+        }
     };
 
     render() {

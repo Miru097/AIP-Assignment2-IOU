@@ -18,43 +18,52 @@ export const getOwes = () => dispatch => {
 
 
 export const addOwe = owe => (dispatch, getState) => {
-  axios
-    .post('/api/owes', owe, tokenConfig(getState))
-    .then(
-      res => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post('/api/owes', owe, tokenConfig(getState))
+      .then(res => {
         dispatch({
           type: ADD_OWE,
           payload: res.data,
         });
+        resolve(res)
       })
-    .catch(
-      err => {
+      .catch(err => {
         dispatch(
           returnErrors(err.response.data, err.response.status, 'ADD_FAIL')
         );
         dispatch({
           type: ADD_FAIL
         });
+        reject(err)
       });
+  })
 };
 
 
 export const deleteOwe = id => (dispatch, getState) => {
-  axios
-    .delete(`/api/owes/${id}`, tokenConfig(getState))
-    .then(res => dispatch({
-      type: DELETE_OWE,
-      payload: id
-    }))
-    .catch(
-      err => {
-        dispatch(
-          returnErrors(err.response.data, err.response.status, 'DELETE_FAIL')
-        );
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`/api/owes/${id}`, tokenConfig(getState))
+      .then(res => {
         dispatch({
-          type: DELETE_FAIL
-        });
-      });
+          type: DELETE_OWE,
+          payload: id
+        })
+        resolve(res)
+      })
+      .catch(
+        err => {
+          dispatch(
+            returnErrors(err.response.data, err.response.status, 'DELETE_FAIL')
+          );
+          dispatch({
+            type: DELETE_FAIL
+          });
+          reject(err)
+        }
+      );
+  })
 };
 
 

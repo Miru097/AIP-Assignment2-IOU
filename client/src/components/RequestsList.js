@@ -83,19 +83,19 @@ class RequestsList extends Component {
             updateDebtor: this.props.user._id
         });
     }
-    handleUpdateOk = () => {
+    handleUpdateOk = async () => {
         if (this.state.updateFavor === null || this.state.updateDebtor === null) {
             message.error({
                 content: 'Please enter all fields'
             });
             return
         } else {
-            this.props.checkRequest(this.state.updateId)
-            this.setState({
-                modalUpdateVisible: false,
-            });
-            setTimeout(() => {
-                if (this.state.msg !== null || this.props.checkedRequest === null) {
+            try {
+                await this.props.checkRequest(this.state.updateId)
+                this.setState({
+                    modalUpdateVisible: false,
+                });
+                if (this.props.checkedRequest === null) {
                     message.error({
                         content: 'This request or authentication has content changed! This page will refresh in 3 seconds!'
                     }, 3);
@@ -119,7 +119,7 @@ class RequestsList extends Component {
                         }, 100)
                         setTimeout(() => {
                             window.location.reload()
-                        }, 300);
+                        }, 500);
                     } else {
                         message.error({
                             content: 'This request has content changed! Please refresh to check the latest content！This page will refresh in 3 seconds!'
@@ -131,7 +131,19 @@ class RequestsList extends Component {
                         }, 3000)
                     }
                 }
-            }, 500)
+            } catch (err) {
+                message.error({
+                    content: 'This request or authentication has content changed! This page will refresh in 3 seconds!'
+                }, 3);
+                this.setState({
+                    modalUpdateVisible: false,
+                });
+                setTimeout(() => {
+                    {
+                        window.location.reload()
+                    }
+                }, 3000)
+            }
         }
     }
     showDeleteModal = (_id, favor, debtor) => {
@@ -164,19 +176,22 @@ class RequestsList extends Component {
         })
 
     }
-    handleDeleteOk = () => {
+    handleDeleteOk = async () => {
         if (this.state.deleteFavor === null || this.state.deleteDebtor === null) {
             message.error({
                 content: 'Please enter all fields'
             });
             return
         } else {
-            this.props.checkRequest(this.state.deleteId)
             this.setState({
                 modalUpdateVisible: false,
             });
-            setTimeout(() => {
-                if (this.state.msg !== null || this.props.checkedRequest === null) {
+            try {
+                await this.props.checkRequest(this.state.deleteId)
+                this.setState({
+                    modalUpdateVisible: false,
+                });
+                if (this.props.checkedRequest === null) {
                     message.error({
                         content: 'This request or authentication has content changed! This page will refresh in 3 seconds!'
                     }, 3);
@@ -206,7 +221,7 @@ class RequestsList extends Component {
                         }, 100)
                         setTimeout(() => {
                             window.location.reload()
-                        }, 300);
+                        }, 500);
                     } else {
                         message.error({
                             content: 'This request has content changed! Please refresh to check the latest content！This page will refresh in 3 seconds!'
@@ -218,7 +233,19 @@ class RequestsList extends Component {
                         }, 3000)
                     }
                 }
-            }, 500)
+            } catch (err) {
+                message.error({
+                    content: 'This request or authentication has content changed! This page will refresh in 3 seconds!'
+                }, 3);
+                this.setState({
+                    modalUpdateVisible: false,
+                });
+                setTimeout(() => {
+                    {
+                        window.location.reload()
+                    }
+                }, 3000)
+            }
         }
     }
     showAcceptModal = (_id, favor, debtor) => {
@@ -240,7 +267,7 @@ class RequestsList extends Component {
             modalAcceptVisible: false,
         });
     };
-    handleAcceptOk = e => {
+    handleAcceptOk = async (e) => {
         for (let index = 0; index < this.state.acceptDebtor.length; index++) {
             if (this.state.acceptDebtor[index] === this.props.user._id) {
                 message.error({
@@ -253,12 +280,12 @@ class RequestsList extends Component {
             modalAcceptVisible: false,
             creditor: this.props.user._id
         });
-        this.props.checkRequest(this.state.acceptId)
-        this.setState({
-            modalUpdateVisible: false,
-        });
-        setTimeout(() => {
-            if (this.state.msg !== null || this.props.checkedRequest === null) {
+        try {
+            await this.props.checkRequest(this.state.acceptId);
+            this.setState({
+                modalUpdateVisible: false,
+            });
+            if (this.props.checkedRequest === null) {
                 message.error({
                     content: 'This request or authentication  has content changed! This page will refresh in 3 seconds!'
                 }, 3);
@@ -280,7 +307,7 @@ class RequestsList extends Component {
                         {
                             window.location.reload()
                         }
-                    }, 300)
+                    }, 500)
                 } else {
                     message.error({
                         content: 'This request has content changed! Please refresh to check the latest content！This page will refresh in 3 seconds!'
@@ -292,7 +319,19 @@ class RequestsList extends Component {
                     }, 3000)
                 }
             }
-        }, 500)
+        } catch (err) {
+            message.error({
+                content: 'This request or authentication  has content changed! This page will refresh in 3 seconds!'
+            }, 3);
+            this.setState({
+                modalUpdateVisible: false,
+            });
+            setTimeout(() => {
+                {
+                    window.location.reload()
+                }
+            }, 3000)
+        }
     }
     onClick = ({ key }) => {
         if (key === "All") {

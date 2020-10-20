@@ -98,7 +98,7 @@ class OweModal extends Component {
         this.setState({ [e.target.name]: e.target.value });
     };
 
-    onSubmit = (e) => {
+    onSubmit = async (e) => {
         this.props.clearErrors();
         e.preventDefault();
         const { favor, debtor, creditor, proof, checked } = this.state;
@@ -109,14 +109,12 @@ class OweModal extends Component {
             proof,
             checked
         };
-        this.props.addOwe(newOwe);
-        setTimeout(() => {
-            if (this.state.msg !== null) {
-                return
-            } else {
-                this.toggleclose();
-            }
-        }, 300);
+        try {
+            await this.props.addOwe(newOwe);
+            this.toggleclose();
+        } catch (err) {
+            return
+        }
     }
     handleChange = (checked) => {
         this.setState({ checked });
