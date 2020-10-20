@@ -18,6 +18,7 @@ import RequestModal from './RequestModal';
 import RequestsList from './RequestsList';
 import TasksLists from './TasksLists';
 import PartyDetection from './PartyDetection';
+import Ranking from './Ranking';
 
 
 class TabBar extends Component {
@@ -98,7 +99,6 @@ class TabBar extends Component {
                                 Request
                             </NavLink>
                         </NavItem>
-
                         <NavItem>
                             <NavLink
                                 className={classnames({ active: this.state.activeTab === '2' })}
@@ -119,12 +119,11 @@ class TabBar extends Component {
                             </Row>
                         </TabPane>
                         <TabPane tabId="2">
+                            <Ranking />
                         </TabPane>
                         {isAuthenticated ? authOweTab : null}
                         {isAuthenticated ? authRequestTab : null}
                         {isAuthenticated ? authPartyTab : null}
-
-
                     </TabContent>
                 </Container>
             </div>

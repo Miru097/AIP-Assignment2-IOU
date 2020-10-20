@@ -35,6 +35,7 @@ class RequestsList extends Component {
     }
     componentDidMount() {
         this.props.getRequests();
+        this.props.getUsers();
     }
     componentDidUpdate(prevProps) {
         const { error } = this.props;
@@ -419,7 +420,6 @@ class RequestsList extends Component {
                                     >
                                         <Meta
                                             title={this.firstUpperCase(description)}
-                                        //description={"This is the description" + favor}
                                         />
                                         <Paragraph ellipsis={{ rows: 3, expandable: true, symbol: 'And more...' }}>
                                             <Space direction="vertical">

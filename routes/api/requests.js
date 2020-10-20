@@ -9,7 +9,7 @@ router.get('/', (req, res) => {
         .then(request => res.json(request));
 });
 router.get('/:id', auth, (req, res) => {
-    Request.findById(req.params.id)
+    Request.findById(req.params.id, { proof: 0, description: 0, date: 0 })
         .then(request => res.json(request))
         .catch(err => res.status(404).json({ msg: 'It had be deleted!' }));
 });

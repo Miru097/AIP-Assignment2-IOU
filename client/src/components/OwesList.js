@@ -3,7 +3,6 @@ import { Container, Button, FormGroup } from 'reactstrap';
 import { connect } from 'react-redux';
 import { getOwes, deleteOwe } from '../actions/oweActions';
 import PropTypes from 'prop-types';
-import { getUsers } from '../actions/userActions';
 import { Image, Modal, List, Typography, Upload, message } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { clearErrors } from '../actions/errorActions';
@@ -19,7 +18,6 @@ class OwesList extends Component {
     }
     componentDidMount() {
         this.props.getOwes();
-        this.props.getUsers();
     }
     state = {
         visible: false,
@@ -291,5 +289,5 @@ const mapStateToProps = (state) => ({
 
 export default connect(
     mapStateToProps,
-    { getOwes, deleteOwe, getUsers, clearErrors }
+    { getOwes, deleteOwe, clearErrors }
 )(OwesList);
