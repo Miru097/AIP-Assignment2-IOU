@@ -13,7 +13,8 @@ router.post('/', (req, res) => {
     //http://www.jsdaxue.com/archives/182.html
     const emailRegexp = /^\w+((-\w+)|(\.\w+))*\@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z0-9]+$/;
     //https://blog.csdn.net/Z_ammo/article/details/103420485
-    const passwordRegexp = /^(?=\S*[a-z])(?=\S*\d)\S{8,20}$/;
+    //const passwordRegexp = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,20}$/;
+    const passwordRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
     if (!name || !email || !password) {
         return res.status(400).json({ msg: 'Please enter all fields!' });
     }

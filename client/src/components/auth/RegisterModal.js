@@ -125,7 +125,8 @@ class RegisterModal extends Component {
                                     onChange={this.onChange}
                                 />
                                 <FormText color="muted">
-                                    The password should include letters, numbers, no spaces, more than 8 digits, and less than 20 digits.
+                                    The password can only contain letters and numbers, and contain at least one uppercase letter, lowercase letter, and number.
+                                    Minimum 8 characters and maximum 20 characters.
                                 </FormText>
                                 <Button
                                     color="dark"
