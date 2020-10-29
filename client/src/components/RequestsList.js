@@ -38,6 +38,7 @@ class RequestsList extends Component {
         this.props.getUsers();
     }
     componentDidUpdate(prevProps) {
+        //check for error msg
         const { error } = this.props;
         if (error !== prevProps.error) {
             if (error.id === 'CHECK_FAIL') {
@@ -84,6 +85,7 @@ class RequestsList extends Component {
         });
     }
     handleUpdateOk = async () => {
+        //check input field
         if (this.state.updateFavor === null || this.state.updateDebtor === null) {
             message.error({
                 content: 'Please enter all fields'
@@ -95,6 +97,7 @@ class RequestsList extends Component {
                 this.setState({
                     modalUpdateVisible: false,
                 });
+                //request has deleted
                 if (this.props.checkedRequest === null) {
                     message.error({
                         content: 'This request or authentication has content changed! This page will refresh in 3 seconds!'
@@ -105,6 +108,7 @@ class RequestsList extends Component {
                         }
                     }, 3000)
                 } else {
+                    //check content whether change
                     if (JSON.stringify(this.state.nowFavor) === JSON.stringify(this.props.checkedRequest.favor)
                         && JSON.stringify(this.state.nowDebtor) === JSON.stringify(this.props.checkedRequest.debtor)
                         && this.props.checkedRequest.creditor === null) {
@@ -132,6 +136,7 @@ class RequestsList extends Component {
                     }
                 }
             } catch (err) {
+                //request didn't exist
                 message.error({
                     content: 'This request or authentication has content changed! This page will refresh in 3 seconds!'
                 }, 3);
@@ -211,6 +216,7 @@ class RequestsList extends Component {
                             debtor: this.state.nowDebtor,
                         })
                         setTimeout(() => {
+                            //check whether the last one favor,if yes do delete, if no do update
                             if (this.state.favor.length > 0) {
                                 const { favor, debtor } = this.state;
                                 const updateRequest = { favor, debtor };
@@ -268,6 +274,7 @@ class RequestsList extends Component {
         });
     };
     handleAcceptOk = async (e) => {
+        //check whether has faovor you added
         for (let index = 0; index < this.state.acceptDebtor.length; index++) {
             if (this.state.acceptDebtor[index] === this.props.user._id) {
                 message.error({
@@ -334,6 +341,7 @@ class RequestsList extends Component {
         }
     }
     onClick = ({ key }) => {
+        //set search key
         if (key === "All") {
             this.setState({ searchKey: null })
         } else {
@@ -347,6 +355,7 @@ class RequestsList extends Component {
         var { requests } = this.props.request;
         var { users } = this.props.users
         requests = requests.filter(requests => requests.creditor === null)
+        //set request content
         if (requests.length !== 0) {
             if (users.length !== 0) {
                 for (let i = 0; i < requests.length; i++) {
@@ -367,6 +376,7 @@ class RequestsList extends Component {
                 }
             }
         }
+        //do search key filter
         if (this.state.searchKey !== null) { requests = requests.filter(requests => requests.favor.includes(this.state.searchKey)) }
         const menu = (
             <Menu onClick={this.onClick}>
@@ -393,6 +403,7 @@ class RequestsList extends Component {
                 </Space>
                 <Row gutter={[16, 16]}>
                     {
+                        //https://stackoverflow.com/questions/53843548/pagination-and-card-components-with-ant-design-antd
                         requests &&
                         requests.length > 0 &&
                         requests.slice(this.state.minValue, this.state.maxValue)

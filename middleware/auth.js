@@ -3,13 +3,11 @@ const jwt = require('jsonwebtoken');
 
 function auth(req, res, next) {
     const token = req.header('x-auth-token');
-
+    //https://www.youtube.com/watch?v=USaB1adUHM0&list=PLillGF-RfqbbiTGgA77tGO426V3hRF9iE&index=9&t=77s
     //Check for token
-    if (!token){
+    if (!token) {
         return res.status(401).json({ msg: 'No token, authorizaton denied' });
     }
-    
-
     try {
         //Verify token
         const decoded = jwt.verify(token, config.get('jwtSecret'));

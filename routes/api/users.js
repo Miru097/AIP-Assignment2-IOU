@@ -5,7 +5,7 @@ const config = require('config');
 const jwt = require('jsonwebtoken');
 
 const User = require('../../models/User');
-
+//user register
 router.post('/', (req, res) => {
     const { name, email, password } = req.body;
     //https://www.jb51.net/article/115170.htm
@@ -70,7 +70,7 @@ router.post('/', (req, res) => {
             })
         })
 });
-
+//get users exclude password and register date
 router.get('/', (req, res) => {
     User.find({}, { password: 0, register_date: 0 })
         .sort({ _id: -1 })

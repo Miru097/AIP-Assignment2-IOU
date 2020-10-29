@@ -25,7 +25,7 @@ class TabBar extends Component {
     static propTypes = {
         auth: PropTypes.object.isRequired
     }
-
+    //https://reactstrap.github.io/components/tabs/
     state = {
         activeTab: '1'
     }

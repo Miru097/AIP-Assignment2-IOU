@@ -29,7 +29,7 @@ class AppNavbar extends Component {
     }
     render() {
         const { isAuthenticated, user } = this.props.auth;
-
+        //show name on navbar
         const authLinks = (
             <Fragment>
                 <NavLink>

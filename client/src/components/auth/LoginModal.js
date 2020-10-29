@@ -41,7 +41,6 @@ class LoginModal extends Component {
                 this.setState({ msg: null });
             }
         }
-        //If authenticated, close modal
         if (this.state.modal) {
             if (isAuthenticated) {
                 this.toggle();
@@ -50,7 +49,6 @@ class LoginModal extends Component {
     }
 
     toggle = () => {
-        //Clear errors
         this.props.clearErrors();
         this.setState({
             modal: !this.state.modal

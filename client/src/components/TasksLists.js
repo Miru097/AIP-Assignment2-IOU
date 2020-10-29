@@ -59,6 +59,7 @@ class TasksLists extends Component {
             });
             return
         } else {
+            //Add request faovr to owe list in order
             for (let index = 0; index < this.state.CompleteFavor.length; index++) {
                 const favor = this.state.CompleteFavor[index]
                 const debtor = this.state.CompleteDebtor[index]
@@ -96,7 +97,7 @@ class TasksLists extends Component {
     handleCancelOk = async (e) => {
         const { creditor } = this.state;
         const cancelRequest = { creditor };
-
+        //change request creditor id to null
         try {
             await this.props.acceptRequest(this.state.cancelId, cancelRequest);
             this.setState({
@@ -183,6 +184,7 @@ class TasksLists extends Component {
                 requests = requests.filter(requests => requests.creditor === id)
             }
         }
+        //set favor info
         if (requests.length !== 0) {
             if (users.length !== 0) {
                 for (let i = 0; i < requests.length; i++) {
@@ -230,6 +232,7 @@ class TasksLists extends Component {
                                             {
                                                 ...proof === null ? <Image
                                                     alt="Proof"
+                                                    //no pic placeholder
                                                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMIAAAB0CAIAAABYEHoOAAABS2lDQ1BERUxMIFU
                                                     yNzE3RAAAKJGVjr9LAnEchp9vGtoPyOESajqoJdDQa5C2TCMCB5GiU2g4z1+h2ZfzoNoaGvoLammLCqqhKdeG9oagpLmhXXA
                                                     puQYrlYboXT4PDy98XhhQDCkrbmCralup5UVVT2dUzyteFMbx4TLMmowmkwmA79uf1hMC4DFoSFkpP8Qugwvhq7ON6+hxWT34
@@ -310,7 +313,6 @@ class TasksLists extends Component {
                                     >
                                         <Meta
                                             title={this.firstUpperCase(description)}
-                                        //description={"This is the description" + favor}
                                         />
                                         <Paragraph ellipsis={{ rows: 3, expandable: true, symbol: 'And more...' }}>
                                             <Space direction="vertical">

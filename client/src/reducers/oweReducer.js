@@ -13,16 +13,19 @@ export default function (state = initialState, action) {
                 loading: false,
             };
         case DELETE_OWE:
+            //delete from state
             return {
                 ...state,
                 owes: state.owes.filter(owe => owe._id !== action.payload)
             };
         case ADD_FAIL:
+            //do not change state
             return {
                 ...state,
                 owes: [...state.owes],
             };
         case ADD_OWE:
+            //add to state
             return {
                 ...state,
                 owes: [action.payload, ...state.owes],

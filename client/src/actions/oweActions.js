@@ -14,9 +14,7 @@ export const getOwes = () => dispatch => {
       err => dispatch(returnErrors(err.response.data, err.response.status))
     );
 };
-
-
-
+//aysnc to add a owe
 export const addOwe = owe => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
     axios
@@ -40,7 +38,7 @@ export const addOwe = owe => (dispatch, getState) => {
   })
 };
 
-
+//async to delete
 export const deleteOwe = id => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
     axios
@@ -65,8 +63,6 @@ export const deleteOwe = id => (dispatch, getState) => {
       );
   })
 };
-
-
 
 export const setOwesLoading = () => {
   return {

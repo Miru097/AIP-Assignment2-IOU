@@ -4,7 +4,7 @@ const path = require('path');
 const app = express();
 const config = require('config')
 var bodyParser = require('body-parser');
-
+//Reset transfer file size limit
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 //Set database and connect to mongoDB
@@ -24,7 +24,7 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/requests', require('./routes/api/requests'));
 
-
+//https://www.youtube.com/watch?v=71wSzpLyW9k&list=PLillGF-RfqbbiTGgA77tGO426V3hRF9iE&index=8
 //Serve static assets if in production
 if (process.env.NODE_ENV === 'production') {
     //Set static folder

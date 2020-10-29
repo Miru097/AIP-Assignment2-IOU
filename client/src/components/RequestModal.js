@@ -60,6 +60,7 @@ class RequestModal extends Component {
                 creditor,
                 proof
             };
+            //add request
             this.props.addRequest(newRequest);
             this.setState({
                 visible: false,

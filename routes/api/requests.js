@@ -8,12 +8,13 @@ router.get('/', (req, res) => {
         .sort({ date: 1 })
         .then(request => res.json(request));
 });
+//async check for request
 router.get('/:id', auth, (req, res) => {
     Request.findById(req.params.id, { proof: 0, description: 0, date: 0 })
         .then(request => res.json(request))
         .catch(err => res.status(404).json({ msg: 'It had be deleted!' }));
 });
-
+//add request
 router.post('/', auth, (req, res) => {
     const { favor, debtor, creditor, proof, description } = req.body;
     const newRequest = new Request({
@@ -31,7 +32,7 @@ router.delete('/:id', auth, (req, res) => {
         .then(request => request.remove().then(() => res.json({ msg: true })))
         .catch(err => res.status(404).json({ msg: false }));
 });
-
+//update or accept
 router.put('/:id', auth, (req, res) => {
     Request.findByIdAndUpdate(req.params.id, req.body)
         .then(request => res.json(request))

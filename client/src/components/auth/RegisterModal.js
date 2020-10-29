@@ -52,7 +52,6 @@ class RegisterModal extends Component {
     }
 
     toggle = () => {
-        //Clear errors
         this.props.clearErrors();
         this.setState({
             modal: !this.state.modal
@@ -66,13 +65,12 @@ class RegisterModal extends Component {
     onSubmit = async (e) => {
         e.preventDefault();
         const { name, email, password } = this.state;
-        //Create user object
         const newUser = {
             name,
             email,
             password
         };
-        //Attempt to register
+        //aynsc attempt to register
         try {
             await this.props.register(newUser);
             window.location.reload()

@@ -31,6 +31,7 @@ class PartyDetection extends Component {
                     }
                 }
                 //do favor stat
+                //https://www.cnblogs.com/mengfangui/p/8033722.html
                 var newFavorArr = [];
                 for (var i = 0; i < favorStatistic.length; i++) {
                     if (newFavorArr.indexOf(favorStatistic[i]) == -1) {
@@ -54,6 +55,7 @@ class PartyDetection extends Component {
                 favorStatisticArray.sort(function (a, b) {
                     return b[1] - a[1]
                 })
+                //https://blog.csdn.net/qq_42720683/article/details/82216942
                 for (var key in favorStatisticArray) {
                     value1.push(key)
                 }

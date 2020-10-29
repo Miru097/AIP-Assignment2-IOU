@@ -6,13 +6,14 @@ const jwt = require('jsonwebtoken');
 const auth = require('../../middleware/auth');
 
 const User = require('../../models/User');
-
+//login
 router.post('/', (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
         return res.status(400).json({ msg: 'Please enter all fields' });
     }
+    //https://www.youtube.com/watch?v=USaB1adUHM0
     User.findOne({ email })
         .then(user => {
             if (!user) return res.status(400).json({ msg: 'User does not exists' });

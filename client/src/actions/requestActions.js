@@ -17,6 +17,7 @@ export const getRequests = () => dispatch => {
             err => dispatch(returnErrors(err.response.data, err.response.status))
         );
 };
+//check request whether same as database now
 export const checkRequest = id => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         axios.get(`/api/requests/${id}`, tokenConfig(getState))
@@ -46,7 +47,7 @@ export const clearCheckRequest = () => {
         type: CLEAR_CHECK_REQUEST,
     };
 };
-
+//aynsc to add
 export const addRequest = request => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         axios
@@ -71,8 +72,7 @@ export const addRequest = request => (dispatch, getState) => {
                 });
     })
 };
-
-
+//aynsc to delete
 export const deleteRequest = id => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         axios
@@ -91,7 +91,7 @@ export const deleteRequest = id => (dispatch, getState) => {
                 });
     })
 };
-
+//aynsc to accept, it is also update
 export const acceptRequest = (id, request) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         axios
@@ -111,7 +111,7 @@ export const acceptRequest = (id, request) => (dispatch, getState) => {
             );
     })
 };
-
+//aynsc to accept, it is update
 export const updateRequest = (id, request) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         axios
@@ -132,7 +132,6 @@ export const updateRequest = (id, request) => (dispatch, getState) => {
             );
     })
 };
-
 
 export const setRequestsLoading = () => {
     return {

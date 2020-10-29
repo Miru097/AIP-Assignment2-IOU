@@ -116,6 +116,7 @@ class OweModal extends Component {
             return
         }
     }
+    //exchange debotor and creditor,clear proof
     handleChange = (checked) => {
         this.setState({ checked });
         this.setState({

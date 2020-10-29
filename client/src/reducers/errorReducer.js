@@ -9,12 +9,14 @@ const initialState = {
 export default function (state = initialState, action) {
     switch (action.type) {
         case GET_ERRORS:
+            //set error msg
             return {
                 msg: action.payload.msg,
                 status: action.payload.status,
                 id: action.payload.id
             };
         case CLEAR_ERRORS:
+            //clear error msg
             return {
                 msg: {},
                 status: null,

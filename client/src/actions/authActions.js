@@ -16,7 +16,6 @@ import {
 export const loadUser = () => (dispatch, getState) => {
     // User loading
     dispatch({ type: USER_LOADING });
-
     axios
         .get('/api/auth/user', tokenConfig(getState))
         .then(res =>
@@ -33,17 +32,16 @@ export const loadUser = () => (dispatch, getState) => {
         });
 };
 
-// Register User
+//register
 export const register = ({ name, email, password }) => dispatch => {
-    // Headers
+    // set headers
     const config = {
         headers: {
             'Content-Type': 'application/json'
         }
     };
-
-    // Request body
     const body = JSON.stringify({ name, email, password });
+    //async for res/err
     return new Promise((resolve, reject) => {
         axios
             .post('/api/users', body, config)
@@ -56,6 +54,7 @@ export const register = ({ name, email, password }) => dispatch => {
             }
             )
             .catch(err => {
+                //set error type
                 dispatch(
                     returnErrors(err.response.data, err.response.status, 'REGISTER_FAIL')
                 );
@@ -66,25 +65,18 @@ export const register = ({ name, email, password }) => dispatch => {
             });
     })
 };
-
-
-
-
-
-// Login User
+//login
 export const login = ({ email, password }) => dispatch => {
-    // Headers
     const config = {
         headers: {
             'Content-Type': 'application/json'
         }
     };
-
-    // Request body
     const body = JSON.stringify({ email, password });
     return new Promise((resolve, reject) => {
         axios
             .post('/api/auth', body, config)
+            //get payload
             .then(res => {
                 dispatch({
                     type: LOGIN_SUCCESS,
@@ -93,6 +85,7 @@ export const login = ({ email, password }) => dispatch => {
                 resolve(res)
             })
             .catch(err => {
+                //set error typd
                 dispatch(
                     returnErrors(err.response.data, err.response.status, 'LOGIN_FAIL')
                 );
@@ -103,30 +96,24 @@ export const login = ({ email, password }) => dispatch => {
             });
     })
 };
-
-// Logout User
+//log out
 export const logout = () => {
     return {
         type: LOGOUT_SUCCESS
     };
 };
-
 // Setup config/headers and token
 export const tokenConfig = getState => {
     // Get token from localstorage
     const token = getState().auth.token;
-
-    // Headers
     const config = {
         headers: {
             'Content-type': 'application/json'
         }
     };
-
     // If token, add to headers
     if (token) {
         config.headers['x-auth-token'] = token;
     }
-
     return config;
 };

@@ -34,6 +34,7 @@ class PartyDetection extends Component {
                         j++
                     }
                 }
+                //only keep one
                 this.state.allPartyArray = this.unique(this.state.allPartyArray)
                 if (this.state.allPartyArray.length > 0) {
                     do {
@@ -43,7 +44,8 @@ class PartyDetection extends Component {
                                 if (this.props.owe.owes[j].creditor == this.props.user._id) {
                                     this.state.detectionPartyArray[k] = this.state.allPartyArray[0]
                                     k++
-                                } else if (!this.state.allPartyArray[0].includes(this.props.owe.owes[j].creditor))// Cannot exist in other parts of the array
+                                } else if (!this.state.allPartyArray[0].includes(this.props.owe.owes[j].creditor))
+                                // Cannot exist in other parts of the array
                                 {
                                     //Put a new extended array at the end
                                     this.state.allPartyArray.push([...this.state.allPartyArray[0], this.props.owe.owes[j].creditor])
@@ -58,6 +60,7 @@ class PartyDetection extends Component {
                 this.state.detectionPartyArray = this.unique(this.state.detectionPartyArray)
             }
         }
+        //change array to a sentence
         if (this.state.detectionPartyArray.length > 0) {
             for (let l = 0; l < this.state.detectionPartyArray.length; l++) {
                 this.state.content[l] = "You can host a " + this.state.detectionPartyArray[l][0] + " party with "
@@ -82,6 +85,7 @@ class PartyDetection extends Component {
             })
         }
     }
+    //https://segmentfault.com/a/1190000016418021
     unique = (array) => {
         let obj = {}
         return array.filter((item, index) => {

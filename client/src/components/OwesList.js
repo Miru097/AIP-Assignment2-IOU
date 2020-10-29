@@ -62,6 +62,7 @@ class OwesList extends Component {
             });
             return
         } else {
+            //async to check whether delete by others
             try {
                 await this.props.deleteOwe(this.state.currentOweId);
                 this.setState({
@@ -155,6 +156,7 @@ class OwesList extends Component {
         var { owes } = this.props.owe;
         var { users } = this.props.users
         if (users.length !== 0) {
+            //set content
             if (this.props.user != null) {
                 const id = this.props.user._id
                 owes = owes.filter(owes => owes.creditor === id || owes.debtor === id)
@@ -219,9 +221,7 @@ class OwesList extends Component {
                             >Delete this owe</Button>]}
                         >
                             <List.Item.Meta
-                                // avatar={ }
                                 title={owes.oweDate}
-                            //description={owes.debtor}
                             />
                             {(isAuthenticated && owes.debtorName !== undefined && owes.creditorName !== undefined) ? (
                                 <Text strong type="default">
@@ -243,6 +243,7 @@ class OwesList extends Component {
                                 ]}
                             >
                                 <p>Are you sure to delete this owe?</p>
+                                {/*check whether you need upload proof*/}
                                 {(isAuthenticated && this.props.user._id === this.state.currentDebtor) ?
                                     (<FormGroup><p>Proof: </p>
                                         <Upload

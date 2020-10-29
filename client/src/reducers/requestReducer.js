@@ -17,11 +17,13 @@ export default function (state = initialState, action) {
                 loading: false,
             };
         case DELETE_REQUEST:
+            //delete from state
             return {
                 ...state,
                 requests: state.requests.filter(request => request._id !== action.payload)
             };
         case ADD_REQUEST_FAIL:
+            //add to state
             return {
                 ...state,
                 requests: [...state.requests],
@@ -37,6 +39,7 @@ export default function (state = initialState, action) {
                 loading: true
             };
         case ACCEPT_REQUEST:
+            //delete this request from request state
             return {
                 ...state,
                 requests: state.requests.filter(request => request._id !== action.payload)
